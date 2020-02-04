@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class IntervalAssociationImplTest {
@@ -26,6 +27,11 @@ class IntervalAssociationImplTest {
 	void init() {
 		pointType = PointType.START;
 		fixture = new IntervalAssociationImpl(value, pointType, parent);
+	}
+
+	@Test
+	void intervalAssociation() {
+		verify(value).addAssociation(fixture);
 	}
 
 	@Test

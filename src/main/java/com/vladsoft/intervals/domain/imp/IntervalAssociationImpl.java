@@ -15,6 +15,7 @@ public class IntervalAssociationImpl implements IntervalAssociation {
 		point = value;
 		type = pointType;
 		interval = parent;
+		value.addAssociation(this);
 	}
 
 	@Override

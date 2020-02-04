@@ -28,7 +28,7 @@ public class IntegerPoint implements Point<Integer> {
 	}
 
 	@Override
-	public boolean addAssociation(IntervalAssociation association) {
+	public synchronized boolean addAssociation(IntervalAssociation association) {
 		return associations.add(association);
 	}
 
