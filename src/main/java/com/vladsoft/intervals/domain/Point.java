@@ -8,4 +8,6 @@ public interface Point<T> {
 
 	Collection<IntervalAssociation> getAssociations();
 
+	boolean addAssociation(IntervalAssociation association);
+
 }
