@@ -1,9 +1,9 @@
 package com.vladsoft.intervals.domain;
 
-public interface Interval<Point> {
+public interface Interval {
 
-	Point getStartPoint();
+	IntervalAssociation getStartPoint();
 
-	Point getEndPoint();
+	IntervalAssociation getEndPoint();
 
 }
