@@ -7,18 +7,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-public class IntegerPoint implements Point<Integer> {
+public class PointImpl<T extends Comparable<T>> implements Point<T> {
 
-	private Integer value;
+	private T value;
 	private Collection<IntervalAssociation> associations;
 
-	public IntegerPoint(Integer value) {
+	public PointImpl(T value) {
 		this.value = value;
 		associations = new HashSet<>();
 	}
 
 	@Override
-	public Integer getValue() {
+	public T getValue() {
 		return value;
 	}
 
@@ -30,6 +30,11 @@ public class IntegerPoint implements Point<Integer> {
 	@Override
 	public synchronized boolean addAssociation(IntervalAssociation association) {
 		return associations.add(association);
+	}
+
+	@Override
+	public int compareTo(Point<T> o) {
+		return value.compareTo(o.getValue());
 	}
 
 }

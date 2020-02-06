@@ -1,6 +1,9 @@
-package com.vladsoft.intervals.domain;
+package com.vladsoft.intervals.domain.imp;
 
-import com.vladsoft.intervals.domain.imp.IntervalImpl;
+import com.vladsoft.intervals.domain.Interval;
+import com.vladsoft.intervals.domain.IntervalAssociation;
+import com.vladsoft.intervals.domain.Point;
+import com.vladsoft.intervals.domain.PointType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,22 +13,22 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 @ExtendWith(MockitoExtension.class)
-class IntervalImplTest {
+class IntervalImplTest<T> {
 
 	//TODO: mock a factory instead of testing IntervalAssociation behavior
-	private Interval fixture;
+	private Interval<T> fixture;
 
 	@Mock
-	private Point startPoint, endPoint;
+	private Point<T> startPoint, endPoint;
 
 	@BeforeEach
 	void setUp() {
-		fixture = new IntervalImpl(startPoint, endPoint);
+		fixture = new IntervalImpl<>(startPoint, endPoint);
 	}
 
 	@Test
 	void getStartNode() {
-		IntervalAssociation intervalStart = fixture.getStartPoint();
+		IntervalAssociation<T> intervalStart = fixture.getStartPoint();
 		assertSame(startPoint, intervalStart.getPoint());
 		assertSame(fixture, intervalStart.getInterval());
 		assertSame(PointType.START, intervalStart.getType());
@@ -33,7 +36,7 @@ class IntervalImplTest {
 
 	@Test
 	void getEndNode() {
-		IntervalAssociation intervalEnd = fixture.getEndPoint();
+		IntervalAssociation<T> intervalEnd = fixture.getEndPoint();
 		assertSame(endPoint, intervalEnd.getPoint());
 		assertSame(fixture, intervalEnd.getInterval());
 		assertSame(PointType.END, intervalEnd.getType());

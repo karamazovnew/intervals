@@ -1,10 +1,10 @@
 package com.vladsoft.intervals.domain;
 
-public interface IntervalAssociation {
+public interface IntervalAssociation<T> {
 
 	Interval getInterval();
 
-	Point getPoint();
+	Point<T> getPoint();
 
 	PointType getType();
 
