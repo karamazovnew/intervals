@@ -10,7 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class IntervalImplTest<T> {
@@ -19,11 +23,19 @@ class IntervalImplTest<T> {
 	private Interval<T> fixture;
 
 	@Mock
-	private Point<T> startPoint, endPoint;
+	private Point<T> startPoint, endPoint, firstPoint, secondPoint;
 
 	@BeforeEach
 	void setUp() {
 		fixture = new IntervalImpl<>(startPoint, endPoint);
+	}
+
+	@Test
+	void illegalInitialization() {
+		int positiveInt = new Random().nextInt();
+		when(firstPoint.compareTo(secondPoint)).thenReturn(positiveInt);
+
+		assertThrows(IllegalArgumentException.class, () -> new IntervalImpl<>(firstPoint, secondPoint));
 	}
 
 	@Test
