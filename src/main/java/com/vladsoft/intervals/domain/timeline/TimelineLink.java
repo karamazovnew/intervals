@@ -54,7 +54,11 @@ public class TimelineLink<T> implements Point<T> {
 		return point;
 	}
 
-	protected Point<T> getPrevious() {
+	protected void accept(LinkVisitor visitor){
+		visitor.visit(this);
+	}
+
+	protected TimelineLink<T> getPrevious() {
 		return previous;
 	}
 

@@ -36,6 +36,9 @@ class TimelineLinkTest<T> {
 	@Mock
 	private IntervalAssociation association, newAssociation;
 
+	@Mock
+	private LinkVisitor visitor;
+
 	@BeforeEach
 	void setUp() {
 		lenient().when(point.getValue()).thenReturn(value);
@@ -66,7 +69,7 @@ class TimelineLinkTest<T> {
 	}
 
 	@Test
-	void initWithPreviousWhenLast(){
+	void initWithPreviousWhenLast() {
 		when(previousLink.getNext()).thenReturn(null);
 
 		fixture = new TimelineLink<T>(point, previousLink, timeline);
@@ -101,6 +104,13 @@ class TimelineLinkTest<T> {
 		when(point.compareTo(otherPoint)).thenReturn(someInt);
 
 		assertThat(fixture.compareTo(otherPoint), is(someInt));
+	}
+
+	@Test
+	void accept() {
+		fixture.accept(visitor);
+
+		verify(visitor).visit(fixture);
 	}
 
 }
