@@ -54,7 +54,7 @@ public class TimelineLink<T> implements Point<T> {
 		return point;
 	}
 
-	protected void accept(LinkVisitor visitor){
+	protected void accept(LinkVisitor<T> visitor){
 		visitor.visit(this);
 	}
 
