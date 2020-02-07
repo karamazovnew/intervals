@@ -7,24 +7,24 @@ import com.vladsoft.intervals.domain.PointType;
 
 public class IntervalImpl<T> implements Interval<T> {
 
-	private IntervalAssociation startPoint;
-	private IntervalAssociation endPoint;
+	private IntervalAssociation<T> startPoint;
+	private IntervalAssociation<T> endPoint;
 
 	public IntervalImpl(Point<T> startPoint, Point<T> endPoint) {
 		if(startPoint.compareTo(endPoint) > 0)
 			throw new IllegalArgumentException("EndPoint must be after StartPoint");
 		//TODO: replace with factory
-		this.startPoint = new IntervalAssociationImpl(startPoint, PointType.START, this);
-		this.endPoint = new IntervalAssociationImpl(endPoint, PointType.END, this);
+		this.startPoint = new IntervalAssociationImpl<T>(startPoint, PointType.START, this);
+		this.endPoint = new IntervalAssociationImpl<T>(endPoint, PointType.END, this);
 	}
 
 	@Override
-	public IntervalAssociation getStartPoint() {
+	public IntervalAssociation<T> getStartPoint() {
 		return startPoint;
 	}
 
 	@Override
-	public IntervalAssociation getEndPoint() {
+	public IntervalAssociation<T> getEndPoint() {
 		return endPoint;
 	}
 

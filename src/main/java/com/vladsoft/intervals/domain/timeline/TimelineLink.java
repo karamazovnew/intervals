@@ -32,12 +32,12 @@ public class TimelineLink<T> implements Point<T> {
 	}
 
 	@Override
-	public Collection<IntervalAssociation> getAssociations() {
+	public Collection<IntervalAssociation<T>> getAssociations() {
 		return point.getAssociations();
 	}
 
 	@Override
-	public boolean addAssociation(IntervalAssociation association) {
+	public boolean addAssociation(IntervalAssociation<T> association) {
 		return point.addAssociation(association);
 	}
 

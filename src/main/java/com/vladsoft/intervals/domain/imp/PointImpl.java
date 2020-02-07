@@ -10,7 +10,7 @@ import java.util.HashSet;
 public class PointImpl<T extends Comparable<T>> implements Point<T> {
 
 	private T value;
-	private Collection<IntervalAssociation> associations;
+	private Collection<IntervalAssociation<T>> associations;
 
 	public PointImpl(T value) {
 		this.value = value;
@@ -23,12 +23,12 @@ public class PointImpl<T extends Comparable<T>> implements Point<T> {
 	}
 
 	@Override
-	public Collection<IntervalAssociation> getAssociations() {
+	public Collection<IntervalAssociation<T>> getAssociations() {
 		return Collections.unmodifiableCollection(associations);
 	}
 
 	@Override
-	public synchronized boolean addAssociation(IntervalAssociation association) {
+	public synchronized boolean addAssociation(IntervalAssociation<T> association) {
 		return associations.add(association);
 	}
 

@@ -6,8 +6,8 @@ public interface Point<T> extends Comparable<Point<T>> {
 
 	T getValue();
 
-	Collection<IntervalAssociation> getAssociations();
+	Collection<IntervalAssociation<T>> getAssociations();
 
-	boolean addAssociation(IntervalAssociation association);
+	boolean addAssociation(IntervalAssociation<T> association);
 
 }
