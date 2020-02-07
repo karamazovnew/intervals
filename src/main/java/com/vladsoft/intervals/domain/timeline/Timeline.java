@@ -9,11 +9,11 @@ public class Timeline<T> {
 	public Timeline() {
 	}
 
-	public TimelineLink getHead() {
+	public TimelineLink<T> getHead() {
 		return head;
 	}
 
-	public TimelineLink getCurrent() {
+	public TimelineLink<T> getCurrent() {
 		return current;
 	}
 
@@ -30,7 +30,7 @@ public class Timeline<T> {
 	private TimelineLink<T> getClosest(TimelineLink<T> from, Point<T> point) {
 		int comparison = from.getPoint().compareTo(point);
 		if (comparison < 0 && from.getNext() != null) {
-			TimelineLink closer = getClosest(from.getNext(), point);
+			TimelineLink<T> closer = getClosest(from.getNext(), point);
 			return closer != null ? closer : from;
 		} else if (comparison > 0) {
 			return null;
