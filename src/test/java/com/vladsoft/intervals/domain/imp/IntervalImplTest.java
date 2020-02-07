@@ -10,8 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -32,15 +30,14 @@ class IntervalImplTest<T> {
 
 	@Test
 	void illegalInitialization() {
-		int positiveInt = new Random().nextInt();
-		when(firstPoint.compareTo(secondPoint)).thenReturn(positiveInt);
+		when(firstPoint.compareTo(secondPoint)).thenReturn(1);
 
 		assertThrows(IllegalArgumentException.class, () -> new IntervalImpl<>(firstPoint, secondPoint));
 	}
 
 	@Test
 	void getStartNode() {
-		IntervalAssociation<T> intervalStart = fixture.getStartPoint();
+		IntervalAssociation intervalStart = fixture.getStartPoint();
 		assertSame(startPoint, intervalStart.getPoint());
 		assertSame(fixture, intervalStart.getInterval());
 		assertSame(PointType.START, intervalStart.getType());
@@ -48,7 +45,7 @@ class IntervalImplTest<T> {
 
 	@Test
 	void getEndNode() {
-		IntervalAssociation<T> intervalEnd = fixture.getEndPoint();
+		IntervalAssociation intervalEnd = fixture.getEndPoint();
 		assertSame(endPoint, intervalEnd.getPoint());
 		assertSame(fixture, intervalEnd.getInterval());
 		assertSame(PointType.END, intervalEnd.getType());

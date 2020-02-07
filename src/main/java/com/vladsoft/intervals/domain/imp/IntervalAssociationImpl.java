@@ -5,13 +5,13 @@ import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.PointType;
 
-public class IntervalAssociationImpl<T> implements IntervalAssociation<T> {
+public class IntervalAssociationImpl implements IntervalAssociation {
 
-	private Interval interval;
-	private Point<T> point;
+	private Interval<?> interval;
+	private Point<?> point;
 	private PointType type;
 
-	public IntervalAssociationImpl(Point<T> value, PointType pointType, Interval parent) {
+	public IntervalAssociationImpl(Point<?> value, PointType pointType, Interval<?> parent) {
 		point = value;
 		type = pointType;
 		interval = parent;
@@ -19,12 +19,12 @@ public class IntervalAssociationImpl<T> implements IntervalAssociation<T> {
 	}
 
 	@Override
-	public Interval getInterval() {
+	public Interval<?> getInterval() {
 		return interval;
 	}
 
 	@Override
-	public Point<T> getPoint() {
+	public Point<?> getPoint() {
 		return point;
 	}
 

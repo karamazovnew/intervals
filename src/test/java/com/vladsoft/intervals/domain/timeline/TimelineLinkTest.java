@@ -34,7 +34,7 @@ class TimelineLinkTest<T> {
 	private Timeline<T> timeline;
 
 	@Mock
-	private IntervalAssociation<T> association, newAssociation;
+	private IntervalAssociation association, newAssociation;
 
 	@BeforeEach
 	void setUp() {
