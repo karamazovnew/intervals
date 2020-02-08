@@ -5,14 +5,17 @@ import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.TimelineVisitor;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 public class TimelineLink<T> implements Point<T> {
 
 	private Point<T> point;
 	private TimelineLink<T> previous, next;
+	private LinkedList<TimelineLink<T>> similars;
 
 	protected TimelineLink(Point<T> point) {
 		this.point = point;
+		similars = new LinkedList<>();
 	}
 
 	@Override
@@ -62,6 +65,10 @@ public class TimelineLink<T> implements Point<T> {
 
 	protected void setNext(TimelineLink<T> next) {
 		this.next = next;
+	}
+
+	protected LinkedList<TimelineLink<T>> getSimilars(){
+		return similars;
 	}
 
 }

@@ -33,29 +33,36 @@ public class TimelineImpl<T> implements Timeline<T> {
 	public void addInterval(Interval<T> interval) {
 		TimelineLink<T> startPoint = makeLink(interval.getStartPoint().getPoint());
 		TimelineLink<T> endPoint = makeLink(interval.getEndPoint().getPoint());
+		TimelineLink<T> cursor;
 		if (head == null) {
 			head = startPoint;
-		} else
-			addPoint(startPoint, head);
-		addPoint(endPoint, startPoint);
+		} else {
+			cursor = head;
+			while (!addPoint(startPoint, cursor))
+				cursor = cursor.getNext();
+		}
+		cursor = startPoint;
+		while (!addPoint(endPoint, cursor))
+			cursor = cursor.getNext();
 	}
 
-	private void addPoint(TimelineLink<T> point, TimelineLink<T> current) {
+	private boolean addPoint(TimelineLink<T> point, TimelineLink<T> current) {
 		int comparison = current.compareTo(point);
 		if (comparison > 0) {
-			if(current == head)
+			if (current == head)
 				head = point;
 			point.accept(insertBefore(current));
-			return;
+			return true;
 		}
 		if (comparison < 0 && current.getNext() == null) {
 			point.accept(insertAfter(current));
-			return;
+			return true;
 		}
-		if (comparison == 0)
+		if (comparison == 0){
 			//TODO: handle equality
-			return;
-		addPoint(point, current.getNext());
+			return true;
+		}
+		return false;
 	}
 
 	private InsertBefore<T> insertBefore(TimelineLink<T> current) {
