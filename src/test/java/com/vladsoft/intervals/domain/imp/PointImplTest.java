@@ -22,7 +22,7 @@ class PointImplTest<T extends Comparable<T>> {
 	private T value, otherValue;
 
 	@Mock
-	private IntervalAssociation association;
+	private IntervalAssociation<T> association;
 
 	@BeforeEach
 	void setUp() {

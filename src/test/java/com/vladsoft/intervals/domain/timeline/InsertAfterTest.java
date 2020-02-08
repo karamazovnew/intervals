@@ -20,7 +20,7 @@ class InsertAfterTest<T> {
 
 	@BeforeEach
 	void setUp() {
-		fixture = new InsertAfter(visitor);
+		fixture = new InsertAfter<>(visitor);
 	}
 
 	@Test

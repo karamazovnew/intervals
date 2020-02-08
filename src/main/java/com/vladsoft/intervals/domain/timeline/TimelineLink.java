@@ -39,8 +39,7 @@ public class TimelineLink<T> implements Point<T> {
 	}
 
 	public int compareTo(TimelineLink<T> o) {
-		TimelineLink<T> actual = (TimelineLink<T>) o;
-		return point.compareTo((actual.getPoint()));
+		return point.compareTo((o.getPoint()));
 	}
 
 	protected void accept(TimelineVisitor<T> visitor) {

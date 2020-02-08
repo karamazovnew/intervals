@@ -37,7 +37,7 @@ class IntervalImplTest<T> {
 
 	@Test
 	void getStartNode() {
-		IntervalAssociation intervalStart = fixture.getStartPoint();
+		IntervalAssociation<T> intervalStart = fixture.getStartPoint();
 		assertSame(startPoint, intervalStart.getPoint());
 		assertSame(fixture, intervalStart.getInterval());
 		assertSame(PointType.START, intervalStart.getType());
@@ -45,7 +45,7 @@ class IntervalImplTest<T> {
 
 	@Test
 	void getEndNode() {
-		IntervalAssociation intervalEnd = fixture.getEndPoint();
+		IntervalAssociation<T> intervalEnd = fixture.getEndPoint();
 		assertSame(endPoint, intervalEnd.getPoint());
 		assertSame(fixture, intervalEnd.getInterval());
 		assertSame(PointType.END, intervalEnd.getType());

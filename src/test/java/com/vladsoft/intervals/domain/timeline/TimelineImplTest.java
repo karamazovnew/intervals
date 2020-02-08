@@ -19,8 +19,6 @@ class TimelineImplTest<T> {
 
 	private TimelineImpl<T> fixture;
 
-	private TimelineLink<T> head;
-
 	@Mock
 	private Point<T> pointA1, pointA2, pointB1, pointB2;
 
@@ -58,7 +56,7 @@ class TimelineImplTest<T> {
 		assertThat(fixture.resetCursor().getValue(), is(valueA1));
 		assertThat(fixture.traverse().getValue(), is(valueA2));
 	}
-//interval
+
 	@Test
 	void add_A1_A2_B1_B2() {
 		when(pointA1.compareTo(pointA2)).thenReturn(-1);

@@ -14,22 +14,22 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class IntervalAssociationImplTest {
+class IntervalAssociationImplTest<T> {
 
-	private IntervalAssociation fixture;
-
-	@Mock
-	private Interval<?> parent;
+	private IntervalAssociation<T> fixture;
 
 	@Mock
-	private Point<?> value;
+	private Interval<T> parent;
+
+	@Mock
+	private Point<T> value;
 
 	private PointType pointType;
 
 	@BeforeEach
 	void init() {
 		pointType = PointType.START;
-		fixture = new IntervalAssociationImpl(value, pointType, parent);
+		fixture = new IntervalAssociationImpl<>(value, pointType, parent);
 	}
 
 	@Test
