@@ -2,6 +2,7 @@ package com.vladsoft.intervals.domain.timeline;
 
 import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
+import com.vladsoft.intervals.domain.TimelineVisitor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class TimelineLinkTest<T> {
+class TimelineImplLinkTest<T> {
 
 	private TimelineLink<T> fixture;
 
@@ -34,7 +35,7 @@ class TimelineLinkTest<T> {
 	private IntervalAssociation<T> association, newAssociation;
 
 	@Mock
-	private LinkVisitor<T> visitor;
+	private TimelineVisitor<T> visitor;
 
 	@BeforeEach
 	void setUp() {

@@ -2,6 +2,7 @@ package com.vladsoft.intervals.domain.timeline;
 
 import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
+import com.vladsoft.intervals.domain.TimelineVisitor;
 
 import java.util.Collection;
 
@@ -39,7 +40,7 @@ public class TimelineLink<T> implements Point<T> {
 		return point.compareTo((actual.getPoint()));
 	}
 
-	protected void accept(LinkVisitor<T> visitor) {
+	protected void accept(TimelineVisitor<T> visitor) {
 		visitor.visit(this);
 	}
 

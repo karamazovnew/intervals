@@ -2,13 +2,14 @@ package com.vladsoft.intervals.domain.timeline;
 
 import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Point;
+import com.vladsoft.intervals.domain.Timeline;
 
-public class Timeline<T> {
+public class TimelineImpl<T> implements Timeline<T> {
 
 	private TimelineLink<T> head;
 	private TimelineLink<T> cursor;
 
-	public Timeline() {
+	public TimelineImpl() {
 	}
 
 	public Point<T> resetCursor() {
@@ -28,6 +29,7 @@ public class Timeline<T> {
 		return null;
 	}
 
+	@Override
 	public void addInterval(Interval<T> interval) {
 		TimelineLink<T> startPoint = makeLink(interval.getStartPoint().getPoint());
 		TimelineLink<T> endPoint = makeLink(interval.getEndPoint().getPoint());

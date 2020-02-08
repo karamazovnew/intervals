@@ -1,18 +1,16 @@
 package com.vladsoft.intervals.domain.timeline;
 
-public class InsertAfter<T> implements LinkVisitor<T> {
-
-	private TimelineLink<T> visitor;
+public final class InsertAfter<T> extends TimelineVisitorImpl<T> {
 
 	public InsertAfter(TimelineLink<T> visitor) {
-		this.visitor = visitor;
+		super(visitor);
 	}
 
 	@Override
-	public void visit(TimelineLink<T> visited) {
-		TimelineLink<T> afterVisitor = visitor.getNext();
-		visitor.setNext(visited);
-		visited.setPrevious(visitor);
+	protected void visit(TimelineLink<T> visited) {
+		TimelineLink<T> afterVisitor = getVisitor().getNext();
+		getVisitor().setNext(visited);
+		visited.setPrevious(getVisitor());
 		visited.setNext(afterVisitor);
 		if (afterVisitor != null) {
 			afterVisitor.setPrevious(visited);

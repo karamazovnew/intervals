@@ -15,9 +15,9 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TimelineTest<T> {
+class TimelineImplTest<T> {
 
-	private Timeline<T> fixture;
+	private TimelineImpl<T> fixture;
 
 	private TimelineLink<T> head;
 
@@ -30,7 +30,7 @@ class TimelineTest<T> {
 	@Mock
 	private Interval<T> intervalA, intervalB;
 	@Mock
-	private IntervalAssociation startA, endA, startB, endB;
+	private IntervalAssociation<T> startA, endA, startB, endB;
 
 	@BeforeEach
 	void setUp() {
@@ -46,7 +46,7 @@ class TimelineTest<T> {
 		lenient().when(endA.getPoint()).thenReturn(pointA2);
 		lenient().when(startB.getPoint()).thenReturn(pointB1);
 		lenient().when(endB.getPoint()).thenReturn(pointB2);
-		fixture = new Timeline<>();
+		fixture = new TimelineImpl<>();
 	}
 
 	@Test

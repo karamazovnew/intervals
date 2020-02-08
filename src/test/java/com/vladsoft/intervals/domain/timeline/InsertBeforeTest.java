@@ -1,5 +1,6 @@
 package com.vladsoft.intervals.domain.timeline;
 
+import com.vladsoft.intervals.domain.TimelineVisitor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +13,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class InsertBeforeTest<T> {
 
-	private LinkVisitor<T> fixture;
+	private TimelineVisitor<T> fixture;
 
 	@Mock
 	private TimelineLink<T> visited, visitor, beforeVisitor;
