@@ -25,13 +25,10 @@ class TimelineLinkTest<T> {
 	private Point<T> point, otherPoint;
 
 	@Mock
-	private TimelineLink<T> previousLink, nextLink;
+	private TimelineLink<T> otherLink;
 
 	@Mock
 	private T value;
-
-	@Mock
-	private Timeline<T> timeline;
 
 	@Mock
 	private IntervalAssociation<T> association, newAssociation;
@@ -43,42 +40,14 @@ class TimelineLinkTest<T> {
 	void setUp() {
 		lenient().when(point.getValue()).thenReturn(value);
 		lenient().when(point.getAssociations()).thenReturn(Arrays.asList(association));
-		fixture = new TimelineLink<>(point, null, timeline);
+		fixture = new TimelineLink<>(point);
 	}
 
 	@Test
 	void initTest() {
 		assertThat(fixture.getPoint(), is(point));
-		assertThat(fixture.getTimeline(), is(timeline));
 		assertThat(fixture.getNext(), is(nullValue()));
 		assertThat(fixture.getPrevious(), is(nullValue()));
-	}
-
-	@Test
-	void initWithPrevious() {
-		when(previousLink.getNext()).thenReturn(nextLink);
-
-		fixture = new TimelineLink<T>(point, previousLink, timeline);
-
-		assertThat(fixture.getPoint(), is(point));
-		assertThat(fixture.getTimeline(), is(timeline));
-		assertThat(fixture.getPrevious(), is(previousLink));
-		verify(previousLink).setNext(fixture);
-		assertThat(fixture.getNext(), is(nextLink));
-		verify(nextLink).setPrevious(fixture);
-	}
-
-	@Test
-	void initWithPreviousWhenLast() {
-		when(previousLink.getNext()).thenReturn(null);
-
-		fixture = new TimelineLink<T>(point, previousLink, timeline);
-
-		assertThat(fixture.getPoint(), is(point));
-		assertThat(fixture.getTimeline(), is(timeline));
-		assertThat(fixture.getPrevious(), is(previousLink));
-		verify(previousLink).setNext(fixture);
-		assertThat(fixture.getNext(), is(nullValue()));
 	}
 
 	@Test
@@ -99,7 +68,16 @@ class TimelineLinkTest<T> {
 	}
 
 	@Test
-	void compareTo() {
+	void compareToLink() {
+		int someInt = new Random().nextInt();
+		when(otherLink.getPoint()).thenReturn(otherPoint);
+		when(point.compareTo(otherPoint)).thenReturn(someInt);
+
+		assertThat(fixture.compareTo(otherLink), is(someInt));
+	}
+
+	@Test
+	void compareToPoint() {
 		int someInt = new Random().nextInt();
 		when(point.compareTo(otherPoint)).thenReturn(someInt);
 

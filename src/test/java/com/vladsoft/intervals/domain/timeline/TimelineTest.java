@@ -1,5 +1,7 @@
 package com.vladsoft.intervals.domain.timeline;
 
+import com.vladsoft.intervals.domain.Interval;
+import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -20,55 +22,126 @@ class TimelineTest<T> {
 	private TimelineLink<T> head;
 
 	@Mock
-	private Point<T> point1, point2, point3;
+	private Point<T> pointA1, pointA2, pointB1, pointB2;
+
+	@Mock
+	private T valueA1, valueA2, valueB1, valueB2;
+
+	@Mock
+	private Interval<T> intervalA, intervalB;
+	@Mock
+	private IntervalAssociation startA, endA, startB, endB;
 
 	@BeforeEach
 	void setUp() {
+		lenient().when(pointA1.getValue()).thenReturn(valueA1);
+		lenient().when(pointA2.getValue()).thenReturn(valueA2);
+		lenient().when(pointB1.getValue()).thenReturn(valueB1);
+		lenient().when(pointB2.getValue()).thenReturn(valueB2);
+		lenient().when(intervalA.getStartPoint()).thenReturn(startA);
+		lenient().when(intervalA.getEndPoint()).thenReturn(endA);
+		lenient().when(intervalB.getStartPoint()).thenReturn(startB);
+		lenient().when(intervalB.getEndPoint()).thenReturn(endB);
+		lenient().when(startA.getPoint()).thenReturn(pointA1);
+		lenient().when(endA.getPoint()).thenReturn(pointA2);
+		lenient().when(startB.getPoint()).thenReturn(pointB1);
+		lenient().when(endB.getPoint()).thenReturn(pointB2);
 		fixture = new Timeline<>();
-		head = (TimelineLink<T>) fixture.addPoint(point1);
 	}
 
 	@Test
-	void addHead() {
-		assertThat(fixture.getHead(), is(head));
-		assertThat(fixture.getCurrent(), is(head));
+	void addFirstInterval() {
+		when(pointA1.compareTo(pointA2)).thenReturn(-1);
+
+		fixture.addInterval(intervalA);
+
+		assertThat(fixture.resetCursor().getValue(), is(valueA1));
+		assertThat(fixture.traverse().getValue(), is(valueA2));
+	}
+//interval
+	@Test
+	void add_A1_A2_B1_B2() {
+		when(pointA1.compareTo(pointA2)).thenReturn(-1);
+		when(pointA1.compareTo(pointB1)).thenReturn(-1);
+		when(pointA2.compareTo(pointB1)).thenReturn(-1);
+		when(pointB1.compareTo(pointB2)).thenReturn(-1);
+
+		fixture.addInterval(intervalA);
+		fixture.addInterval(intervalB);
+
+		assertThat(fixture.resetCursor().getValue(), is(valueA1));
+		assertThat(fixture.traverse().getValue(), is(valueA2));
+		assertThat(fixture.traverse().getValue(), is(valueB1));
+		assertThat(fixture.traverse().getValue(), is(valueB2));
+
 	}
 
 	@Test
-	void addPointsInOrder() {
-		when(point1.compareTo(point2)).thenReturn(-1);
-		when(point1.compareTo(point3)).thenReturn(-1);
-		when(point2.compareTo(point3)).thenReturn(-1);
+	void add_B1_B2_A1_A2() {
+		when(pointA1.compareTo(pointA2)).thenReturn(-1);
+		when(pointA1.compareTo(pointB1)).thenReturn(1);
+		when(pointB1.compareTo(pointB2)).thenReturn(-1);
+		when(pointA1.compareTo(pointB2)).thenReturn(1);
 
-		TimelineLink<T> secondAdded = (TimelineLink<T>) fixture.addPoint(point2);
+		fixture.addInterval(intervalA);
+		fixture.addInterval(intervalB);
 
-		assertThat(head.getNext(), is(secondAdded));
-		assertThat(secondAdded.getPrevious(), is(head));
-		assertThat(secondAdded.getNext(), is(nullValue()));
+		assertThat(fixture.resetCursor().getValue(), is(valueB1));
+		assertThat(fixture.traverse().getValue(), is(valueB2));
+		assertThat(fixture.traverse().getValue(), is(valueA1));
+		assertThat(fixture.traverse().getValue(), is(valueA2));
 
-		TimelineLink<T> thirdAdded = (TimelineLink<T>) fixture.addPoint(point3);
-
-		assertThat(head.getNext(), is(secondAdded));
-		assertThat(secondAdded.getPrevious(), is(head));
-		assertThat(secondAdded.getNext(), is(thirdAdded));
-		assertThat(thirdAdded.getPrevious(), is(secondAdded));
-		assertThat(thirdAdded.getNext(), is(nullValue()));
 	}
 
 	@Test
-	void addPointsInRandomOrder() {
-		when(point1.compareTo(point2)).thenReturn(-1);
-		when(point1.compareTo(point3)).thenReturn(-1);
-		when(point2.compareTo(point3)).thenReturn(1);
+	void add_A1_B1_A2_B2() {
+		when(pointA1.compareTo(pointA2)).thenReturn(-1);
+		when(pointA1.compareTo(pointB1)).thenReturn(-1);
+		when(pointA2.compareTo(pointB1)).thenReturn(1);
+		when(pointB1.compareTo(pointB2)).thenReturn(-1);
+		when(pointA2.compareTo(pointB2)).thenReturn(-1);
 
-		TimelineLink<T> secondAdded = (TimelineLink<T>) fixture.addPoint(point2);
-		TimelineLink<T> thirdAdded = (TimelineLink<T>) fixture.addPoint(point3);
+		fixture.addInterval(intervalA);
+		fixture.addInterval(intervalB);
 
-		assertThat(head.getNext(), is(thirdAdded));
-		assertThat(thirdAdded.getPrevious(), is(head));
-		assertThat(thirdAdded.getNext(), is(secondAdded));
-		assertThat(secondAdded.getPrevious(), is(thirdAdded));
-		assertThat(secondAdded.getNext(), is(nullValue()));
+		assertThat(fixture.resetCursor().getValue(), is(valueA1));
+		assertThat(fixture.traverse().getValue(), is(valueB1));
+		assertThat(fixture.traverse().getValue(), is(valueA2));
+		assertThat(fixture.traverse().getValue(), is(valueB2));
+	}
+
+	@Test
+	void add_B1_A1_A2_B2() {
+		when(pointA1.compareTo(pointA2)).thenReturn(-1);
+		when(pointA1.compareTo(pointB1)).thenReturn(1);
+		when(pointB1.compareTo(pointB2)).thenReturn(-1);
+		when(pointA1.compareTo(pointB2)).thenReturn(-1);
+		when(pointA2.compareTo(pointB2)).thenReturn(-1);
+
+		fixture.addInterval(intervalA);
+		fixture.addInterval(intervalB);
+
+		assertThat(fixture.resetCursor().getValue(), is(valueB1));
+		assertThat(fixture.traverse().getValue(), is(valueA1));
+		assertThat(fixture.traverse().getValue(), is(valueA2));
+		assertThat(fixture.traverse().getValue(), is(valueB2));
+	}
+
+	@Test
+	void add_B1_A1_B2_A2() {
+		when(pointA1.compareTo(pointA2)).thenReturn(-1);
+		when(pointA1.compareTo(pointB1)).thenReturn(1);
+		when(pointB1.compareTo(pointB2)).thenReturn(-1);
+		when(pointA1.compareTo(pointB2)).thenReturn(-1);
+		when(pointA2.compareTo(pointB2)).thenReturn(1);
+
+		fixture.addInterval(intervalA);
+		fixture.addInterval(intervalB);
+
+		assertThat(fixture.resetCursor().getValue(), is(valueB1));
+		assertThat(fixture.traverse().getValue(), is(valueA1));
+		assertThat(fixture.traverse().getValue(), is(valueB2));
+		assertThat(fixture.traverse().getValue(), is(valueA2));
 	}
 
 }

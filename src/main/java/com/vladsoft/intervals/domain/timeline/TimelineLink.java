@@ -7,23 +7,11 @@ import java.util.Collection;
 
 public class TimelineLink<T> implements Point<T> {
 
-	private Timeline<T> timeline;
-
 	private Point<T> point;
 	private TimelineLink<T> previous, next;
 
-	protected TimelineLink(Point<T> point, TimelineLink<T> previous, Timeline<T> timeline) {
+	protected TimelineLink(Point<T> point) {
 		this.point = point;
-		this.timeline = timeline;
-		//link is placed after head
-		if (previous != null) {
-			this.previous = previous;
-			next = previous.getNext();
-			previous.setNext(this);
-			if (next != null)
-				next.setPrevious(this);
-		}
-		//TODO: link is the new head;
 	}
 
 	@Override
@@ -46,16 +34,17 @@ public class TimelineLink<T> implements Point<T> {
 		return point.compareTo(o);
 	}
 
-	protected Timeline<T> getTimeline() {
-		return timeline;
+	public int compareTo(TimelineLink<T> o) {
+		TimelineLink<T> actual = (TimelineLink<T>) o;
+		return point.compareTo((actual.getPoint()));
+	}
+
+	protected void accept(LinkVisitor<T> visitor) {
+		visitor.visit(this);
 	}
 
 	protected Point<T> getPoint() {
 		return point;
-	}
-
-	protected void accept(LinkVisitor<T> visitor){
-		visitor.visit(this);
 	}
 
 	protected TimelineLink<T> getPrevious() {

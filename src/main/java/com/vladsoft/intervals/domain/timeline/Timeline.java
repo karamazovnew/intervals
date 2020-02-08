@@ -1,43 +1,71 @@
 package com.vladsoft.intervals.domain.timeline;
 
+import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Point;
 
 public class Timeline<T> {
 
-	private TimelineLink<T> head, current;
+	private TimelineLink<T> head;
+	private TimelineLink<T> cursor;
 
 	public Timeline() {
 	}
 
-	public TimelineLink<T> getHead() {
-		return head;
+	public Point<T> resetCursor() {
+		cursor = head;
+		return getCursor();
 	}
 
-	public TimelineLink<T> getCurrent() {
-		return current;
+	public Point<T> getCursor() {
+		return cursor == null ? null : cursor.getPoint();
 	}
 
-	public Point<T> addPoint(Point<T> point) {
+	public Point<T> traverse() {
+		if (cursor != null) {
+			cursor = cursor.getNext();
+			return getCursor();
+		}
+		return null;
+	}
+
+	public void addInterval(Interval<T> interval) {
+		TimelineLink<T> startPoint = makeLink(interval.getStartPoint().getPoint());
+		TimelineLink<T> endPoint = makeLink(interval.getEndPoint().getPoint());
 		if (head == null) {
-			head = new TimelineLink<>(point, null, this);
-			current = head;
-			return head;
-		} else {
-			return new TimelineLink<>(point, getClosest(head, point), this);
-		}
+			head = startPoint;
+		} else
+			addPoint(startPoint, head);
+		addPoint(endPoint, startPoint);
 	}
 
-	private TimelineLink<T> getClosest(TimelineLink<T> from, Point<T> point) {
-		int comparison = from.getPoint().compareTo(point);
-		if (comparison < 0 && from.getNext() != null) {
-			TimelineLink<T> closer = getClosest(from.getNext(), point);
-			return closer != null ? closer : from;
-		} else if (comparison > 0) {
-			return null;
+	private void addPoint(TimelineLink<T> point, TimelineLink<T> current) {
+		int comparison = current.compareTo(point);
+		if (comparison > 0) {
+			if(current == head)
+				head = point;
+			point.accept(insertBefore(current));
+			return;
 		}
-		return from;
-		//TODO: what if equal?
-		//TODO: what if point is smaller than from?
+		if (comparison < 0 && current.getNext() == null) {
+			point.accept(insertAfter(current));
+			return;
+		}
+		if (comparison == 0)
+			//TODO: handle equality
+			return;
+		addPoint(point, current.getNext());
+	}
+
+	private InsertBefore<T> insertBefore(TimelineLink<T> current) {
+		return new InsertBefore<>(current);
+	}
+
+	private InsertAfter<T> insertAfter(TimelineLink<T> current) {
+		return new InsertAfter<>(current);
+	}
+
+	private TimelineLink<T> makeLink(Point<T> point) {
+		return new TimelineLink<>(point);
 	}
 
 }
