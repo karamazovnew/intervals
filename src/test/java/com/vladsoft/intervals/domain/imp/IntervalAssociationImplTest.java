@@ -10,26 +10,27 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class IntervalAssociationImplTest<T> {
 
-	private IntervalAssociation<T> fixture;
+	private IntervalAssociation fixture;
 
 	@Mock
-	private Interval<T> parent;
+	private Interval parent;
 
 	@Mock
-	private Point<T> value;
+	private Point value;
 
 	private PointType pointType;
 
 	@BeforeEach
 	void init() {
 		pointType = PointType.START;
-		fixture = new IntervalAssociationImpl<>(value, pointType, parent);
+		fixture = new IntervalAssociationImpl(value, pointType, parent);
 	}
 
 	@Test
@@ -39,17 +40,17 @@ class IntervalAssociationImplTest<T> {
 
 	@Test
 	void getInterval() {
-		assertSame(parent, fixture.getInterval());
+		assertThat(fixture.getInterval(), is(parent));
 	}
 
 	@Test
 	void getPoint() {
-		assertSame(value, fixture.getPoint());
+		assertThat(fixture.getPoint(), is(value));
 	}
 
 	@Test
 	void getType() {
-		assertSame(pointType, fixture.getType());
+		assertThat(fixture.getType(), is(pointType));
 	}
 
 }

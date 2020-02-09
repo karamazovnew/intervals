@@ -10,45 +10,64 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IntervalImplTest<T> {
+class IntervalImplTest {
 
-	//TODO: mock a factory instead of testing IntervalAssociation behavior
-	private Interval<T> fixture;
+	private Interval fixture;
 
 	@Mock
-	private Point<T> startPoint, endPoint, firstPoint, secondPoint;
+	private Point startPoint, endPoint, firstPoint, secondPoint;
 
 	@BeforeEach
 	void setUp() {
-		fixture = new IntervalImpl<>(startPoint, endPoint);
+		when(startPoint.compareTo(endPoint)).thenReturn(-1);
+		fixture = new IntervalImpl(startPoint, endPoint);
 	}
 
 	@Test
-	void illegalInitialization() {
+	void illegalInterval() {
 		when(firstPoint.compareTo(secondPoint)).thenReturn(1);
 
-		assertThrows(IllegalArgumentException.class, () -> new IntervalImpl<>(firstPoint, secondPoint));
+		assertThrows(IllegalArgumentException.class, () -> new IntervalImpl(firstPoint, secondPoint));
+	}
+
+	@Test
+	void illegalPoints() {
+		assertThrows(ClassCastException.class, () -> {
+			new IntervalImpl(new PointImpl(2), new PointImpl("foo"));
+		});
 	}
 
 	@Test
 	void getStartNode() {
-		IntervalAssociation<T> intervalStart = fixture.getStartPoint();
-		assertSame(startPoint, intervalStart.getPoint());
-		assertSame(fixture, intervalStart.getInterval());
-		assertSame(PointType.START, intervalStart.getType());
+		IntervalAssociation intervalStart = fixture.getStartPoint();
+
+		assertThat(intervalStart.getPoint(), is(startPoint));
+		assertThat(intervalStart.getInterval(), is(fixture));
+		assertThat(intervalStart.getType(), is(PointType.START));
 	}
 
 	@Test
 	void getEndNode() {
-		IntervalAssociation<T> intervalEnd = fixture.getEndPoint();
-		assertSame(endPoint, intervalEnd.getPoint());
-		assertSame(fixture, intervalEnd.getInterval());
-		assertSame(PointType.END, intervalEnd.getType());
+		IntervalAssociation intervalEnd = fixture.getEndPoint();
+
+		assertThat(intervalEnd.getPoint(), is(endPoint));
+		assertThat(intervalEnd.getInterval(), is(fixture));
+		assertThat(intervalEnd.getType(), is(PointType.END));
+	}
+
+	@Test
+	void getInstantNodes() {
+		when(startPoint.compareTo(endPoint)).thenReturn(0);
+
+		fixture = new IntervalImpl(startPoint, endPoint);
+
+		assertThat(fixture.getStartPoint().getType(), is(PointType.INSTANT));
 	}
 
 }

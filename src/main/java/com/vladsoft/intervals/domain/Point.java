@@ -2,12 +2,12 @@ package com.vladsoft.intervals.domain;
 
 import java.util.Collection;
 
-public interface Point<T> extends Comparable<Point<T>> {
+public interface Point extends Comparable<Point> {
 
-	T getValue();
+	Comparable<?> getValue();
 
-	Collection<IntervalAssociation<T>> getAssociations();
+	Collection<IntervalAssociation> getAssociations();
 
-	boolean addAssociation(IntervalAssociation<T> association);
+	boolean addAssociation(IntervalAssociation association);
 
 }

@@ -1,7 +1,11 @@
 package com.vladsoft.intervals.domain;
 
-public interface Timeline<T> {
+import java.util.Collection;
 
-	void addInterval(Interval<T> interval);
+public interface Timeline {
+
+	void addInterval(Interval interval);
+
+	Collection<Interval> getIntervals(Comparable<?> point);
 
 }

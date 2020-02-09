@@ -5,27 +5,38 @@ import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.PointType;
 
-public class IntervalImpl<T> implements Interval<T> {
+public class IntervalImpl implements Interval {
 
-	private IntervalAssociation<T> startPoint;
-	private IntervalAssociation<T> endPoint;
+	private IntervalAssociation startPoint;
+	private IntervalAssociation endPoint;
 
-	public IntervalImpl(Point<T> startPoint, Point<T> endPoint) {
-		if(startPoint.compareTo(endPoint) > 0)
+	public IntervalImpl(Point startPoint, Point endPoint) throws IllegalArgumentException, ClassCastException {
+		int compare = startPoint.compareTo(endPoint);
+		if (compare > 0)
 			throw new IllegalArgumentException("EndPoint must be after StartPoint");
-		//TODO: replace with factory
-		this.startPoint = new IntervalAssociationImpl<>(startPoint, PointType.START, this);
-		this.endPoint = new IntervalAssociationImpl<>(endPoint, PointType.END, this);
+		else if (compare == 0) {
+			this.startPoint = new IntervalAssociationImpl(startPoint, PointType.INSTANT, this);
+			this.endPoint = new IntervalAssociationImpl(endPoint, PointType.INSTANT, this);
+		} else {
+			this.startPoint = new IntervalAssociationImpl(startPoint, PointType.START, this);
+			this.endPoint = new IntervalAssociationImpl(endPoint, PointType.END, this);
+		}
 	}
 
 	@Override
-	public IntervalAssociation<T> getStartPoint() {
+	public IntervalAssociation getStartPoint() {
 		return startPoint;
 	}
 
 	@Override
-	public IntervalAssociation<T> getEndPoint() {
+	public IntervalAssociation getEndPoint() {
 		return endPoint;
+	}
+
+	@Override
+	public String toString() {
+		return "interval [" + startPoint.getPoint().getValue() + "/" +
+				endPoint.getPoint().getValue() + "]";
 	}
 
 }

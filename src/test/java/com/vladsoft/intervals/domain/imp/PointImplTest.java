@@ -2,41 +2,61 @@ package com.vladsoft.intervals.domain.imp;
 
 import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Random;
+import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class PointImplTest<T extends Comparable<T>> {
+class PointImplTest<T> {
 
-	private Point<T> fixture;
+	private Point fixture;
+
+	private Integer value;
 
 	@Mock
-	private T value, otherValue;
-
-	@Mock
-	private IntervalAssociation<T> association;
+	private IntervalAssociation association;
 
 	@BeforeEach
 	void setUp() {
-		fixture = new PointImpl<>(value);
+		value = 1;
+		fixture = new PointImpl(value);
+	}
+
+	@Test
+	void testLegalValues() {
+		assertDoesNotThrow(() -> {
+			new PointImpl("someString");
+			new PointImpl(1L);
+			new PointImpl(new Date());
+			Object validObject = new Comparable<T>() {
+				@Override
+				public int compareTo(T o) {
+					return 0;
+				}
+			};
+			new PointImpl((Comparable<?>) validObject);
+		});
 	}
 
 	@Test
 	void getValue() {
-		assertSame(value, fixture.getValue());
+		assertThat(fixture.getValue(), is(value));
 	}
 
 	@Test
 	void getAssociations() {
-		assertTrue(fixture.getAssociations().isEmpty());
+		assertThat(fixture.getAssociations(), is(Matchers.empty()));
 		assertThrows(UnsupportedOperationException.class, () -> fixture.getAssociations().add(association));
 		assertThrows(UnsupportedOperationException.class, () -> fixture.getAssociations().remove(association));
 	}
@@ -44,17 +64,25 @@ class PointImplTest<T extends Comparable<T>> {
 	@Test
 	void addAssociation() {
 		boolean added = fixture.addAssociation(association);
-		assertTrue(added);
-		assertEquals(1, fixture.getAssociations().size());
-		assertSame(association, fixture.getAssociations().stream().findFirst().orElse(null));
+		assertThat(added, is(true));
+		assertThat(fixture.getAssociations(), hasSize(1));
+		assertThat(association, is(fixture.getAssociations().stream().findFirst().orElse(null)));
 	}
 
 	@Test
 	void compareTo() {
-		int someInt = new Random().nextInt();
-		when(value.compareTo(otherValue)).thenReturn(someInt);
-		PointImpl<T> other = new PointImpl<>(otherValue);
-		assertEquals(someInt, fixture.compareTo(other));
+		Point bigger = new PointImpl(5);
+		Point eq = new PointImpl(1);
+		assertThat(fixture.compareTo(bigger), Matchers.lessThan(0));
+		assertThat(bigger.compareTo(fixture), Matchers.greaterThan(0));
+		assertThat(fixture.compareTo(eq), is(0));
+	}
+
+	@Test
+	void compareToFail() {
+		assertThrows(ClassCastException.class, () -> {
+			fixture.compareTo(new PointImpl("foo"));
+		}, "Cannot compare incompatible types");
 	}
 
 }
