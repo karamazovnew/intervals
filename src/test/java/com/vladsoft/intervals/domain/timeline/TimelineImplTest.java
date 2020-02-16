@@ -5,7 +5,6 @@ import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.PointType;
 import com.vladsoft.intervals.domain.imp.PointImpl;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +52,7 @@ class TimelineImplTest {
 
 		fixture.addInterval(intervalA);
 
-		assertThat(fixture.getIntervals(1), Matchers.contains(intervalA));
+		assertThat(fixture.getIntervals(1), contains(intervalA));
 		assertThat(fixture.getAssociations(pointA1), containsInAnyOrder(startA, endA));
 	}
 
@@ -73,10 +72,55 @@ class TimelineImplTest {
 		fixture.addInterval(intervalA);
 		fixture.addInterval(intervalB);
 
-		assertThat(fixture.getIntervals(0), Matchers.contains(intervalA));
+		assertThat(fixture.getIntervals(0), contains(intervalA));
 		assertThat(fixture.getAssociations(pointA1), containsInAnyOrder(startA, endA));
-		assertThat(fixture.getIntervals(5), Matchers.contains(intervalB));
+		assertThat(fixture.getIntervals(5), contains(intervalB));
 		assertThat(fixture.getAssociations(pointB1), containsInAnyOrder(startB, endB));
+	}
+
+	@Test
+	void addSimpleInterval() {
+		pointA1 = new PointImpl(2);
+		pointA2 = new PointImpl(4);
+		when(startA.getPoint()).thenReturn(pointA1);
+		when(endA.getPoint()).thenReturn(pointA2);
+		when(startA.getType()).thenReturn(PointType.START);
+		lenient().when(endA.getType()).thenReturn(PointType.END);
+
+		fixture.addInterval(intervalA);
+
+		assertThat(fixture.getIntervals(1), empty());
+		assertThat(fixture.getIntervals(2), contains(intervalA));
+		assertThat(fixture.getIntervals(3), contains(intervalA));
+		assertThat(fixture.getIntervals(4), contains(intervalA));
+		assertThat(fixture.getIntervals(5), empty());
+	}
+
+	@Test
+	void addTwoIntervals() {
+		pointA1 = new PointImpl(3);
+		pointA2 = new PointImpl(5);
+		pointB1 = new PointImpl(2);
+		pointB2 = new PointImpl(6);
+		when(startA.getPoint()).thenReturn(pointA1);
+		when(endA.getPoint()).thenReturn(pointA2);
+		when(startA.getType()).thenReturn(PointType.START);
+		lenient().when(endA.getType()).thenReturn(PointType.END);
+		when(startB.getPoint()).thenReturn(pointB1);
+		when(endB.getPoint()).thenReturn(pointB2);
+		lenient().when(startB.getType()).thenReturn(PointType.START);
+		lenient().when(endB.getType()).thenReturn(PointType.END);
+
+		fixture.addInterval(intervalA);
+		fixture.addInterval(intervalB);
+
+		assertThat(fixture.getIntervals(1), empty());
+		assertThat(fixture.getIntervals(2), contains(intervalB));
+		assertThat(fixture.getIntervals(3), containsInAnyOrder(intervalA, intervalB));
+		assertThat(fixture.getIntervals(4), containsInAnyOrder(intervalA, intervalB));
+		assertThat(fixture.getIntervals(5), containsInAnyOrder(intervalA, intervalB));
+		assertThat(fixture.getIntervals(6), contains(intervalB));
+		assertThat(fixture.getIntervals(7), empty());
 	}
 
 	private class TestValue<T extends Comparable<T>> implements Comparable<TestValue<T>> {

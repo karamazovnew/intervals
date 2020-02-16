@@ -3,8 +3,9 @@ package com.vladsoft.intervals.domain.timeline;
 import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.PointType;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,13 +13,26 @@ public class Link {
 
 	private Collection<IntervalAssociation> associations;
 	private Collection<IntervalAssociation> inherited;
-	private Comparable<?> invalidatedBy;
 
+	//used only for instant interval points
+	protected Link(Collection<IntervalAssociation> associations, Collection<IntervalAssociation> inheritance) {
+		this.associations = new ArrayList<>(associations);
+		if (inheritance != null)
+			inherited = new ArrayList<>(inheritance);
+		else
+			inherited = new ArrayList<>();
+	}
 
-	protected Link(Collection<IntervalAssociation> associations, Collection<IntervalAssociation> inherited) {
-		this.associations = new HashSet<>(associations);
-		this.inherited = new HashSet<>(inherited);
-		this.invalidatedBy = null;
+	protected Link(IntervalAssociation association, Collection<IntervalAssociation> inheritance) {
+		associations = new ArrayList<>(Collections.singletonList(association));
+		if (inheritance == null)
+			inherited = new ArrayList<>();
+		else if (association.getType().equals(PointType.END))
+			inherited = inheritance.stream()
+					.filter(i -> !association.getInterval().equals(i.getInterval())).collect(Collectors.toList());
+		else
+			inherited = new ArrayList<>(inheritance);
+
 	}
 
 	protected Collection<IntervalAssociation> getAssociations() {
@@ -35,16 +49,12 @@ public class Link {
 				.collect(Collectors.toList());
 	}
 
-	protected void addAssociations(Collection<IntervalAssociation> associations) {
-		this.associations.addAll(associations);
+	protected void addAssociation(IntervalAssociation association) {
+		associations.add(association);
 	}
 
-	public Comparable<?> getInvalidatedBy() {
-		return invalidatedBy;
-	}
-
-	public void setInvalidatedBy(Comparable<?> invalidatedBy) {
-		this.invalidatedBy = invalidatedBy;
+	protected void addInheritance(IntervalAssociation inheritance) {
+		inherited.add(inheritance);
 	}
 
 }

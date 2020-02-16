@@ -1,5 +1,6 @@
 package com.vladsoft.intervals.domain.timeline;
 
+import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.PointType;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,10 +25,10 @@ class LinkTest {
 	private IntervalAssociation association1, association2, association3;
 
 	@Mock
-	private IntervalAssociation inherited1, inherited2;
+	private IntervalAssociation inherited1, inherited2, inherited3;
 
 	@Mock
-	private Comparable<?> otherLink;
+	private Interval interval;
 
 	@BeforeEach
 	void setUp() {
@@ -67,17 +67,33 @@ class LinkTest {
 	}
 
 	@Test
-	void addAssociations() {
-		fixture.addAssociations(Collections.singleton(association3));
+	void addAssociation() {
+		fixture.addAssociation(association3);
 
 		assertThat(fixture.getAssociations(), hasItem(association3));
 	}
 
 	@Test
-	void getInvalidatedBy() {
-		fixture.setInvalidatedBy(otherLink);
+	void addInheritance() {
+		when(association1.getType()).thenReturn(PointType.START); //value not important, prevents NPE during test
+		when(association2.getType()).thenReturn(PointType.START); //value not important, prevents NPE during test
 
-		assertThat(fixture.getInvalidatedBy(), is(otherLink));
+		fixture.addInheritance(inherited3);
+
+		assertThat(fixture.getInheritance(), hasItem(inherited3));
+	}
+
+	@Test
+	void endPointFiltersKnownInterval() {
+		when(association1.getType()).thenReturn(PointType.END);
+		when(association1.getInterval()).thenReturn(interval);
+		when(inherited2.getInterval()).thenReturn(interval);
+
+		fixture = new Link(association1, Arrays.asList(inherited1, inherited2));
+
+		assertThat(fixture.getInheritance(), contains(inherited1));
+		assertThat(fixture.getAllAssociations().collect(Collectors.toList()),
+				containsInAnyOrder(association1, inherited1));
 	}
 
 }
