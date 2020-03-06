@@ -28,7 +28,7 @@ public class TimelineImpl implements Timeline {
 		Point startPoint = startAssociation.getPoint();
 		Point endPoint = endAssociation.getPoint();
 		if (startPoint.compareTo(endPoint) == 0)
-			addInstantInterval(startAssociation, endAssociation);
+			addInstantInterval(startAssociation);
 		else {
 			Comparable<?> first = addPoint(startAssociation);
 			Comparable<?> second = addPoint(endAssociation);
@@ -57,19 +57,18 @@ public class TimelineImpl implements Timeline {
 		return links.get(point.getValue()).getAllAssociations().collect(Collectors.toList());
 	}
 
-	private void addInstantInterval(IntervalAssociation startPoint, IntervalAssociation endPoint) {
-		Comparable<?> key = startPoint.getPoint().getValue();
+	private void addInstantInterval(IntervalAssociation association) {
+		Comparable<?> key = association.getPoint().getValue();
 		Link found = links.get(key);
 		if (found != null) {
-			found.addAssociation(startPoint);
-			found.addAssociation(endPoint);
+			found.addAssociation(association);
 		} else {
 			Map.Entry<Comparable<?>, Link> previous = links.lowerEntry(key);
 			if (previous != null)
-				links.put(key, makeLink(Arrays.asList(startPoint, endPoint),
+				links.put(key, makeLink(Collections.singletonList(association),
 						previous.getValue().getInheritance()));
 			else
-				links.put(key, makeLink(Arrays.asList(startPoint, endPoint),
+				links.put(key, makeLink(Collections.singletonList(association),
 						null));
 		}
 	}
