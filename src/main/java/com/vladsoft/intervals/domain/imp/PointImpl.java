@@ -1,51 +1,34 @@
 package com.vladsoft.intervals.domain.imp;
 
-import com.vladsoft.intervals.domain.IntervalAssociation;
+import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Point;
+import com.vladsoft.intervals.domain.PointType;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+public class PointImpl<T extends Comparable<T>> implements Point<T> {
 
-public class PointImpl implements Point {
+	private T value;
+	private Interval<T> interval;
+	private PointType type;
 
-	private Comparable<?> value;
-	private Collection<IntervalAssociation> associations;
-
-	public PointImpl(Comparable<?> value) throws IllegalArgumentException {
+	public PointImpl(T value, PointType pointType, Interval<T> parent) {
 		this.value = value;
-		associations = new HashSet<>();
+		type = pointType;
+		interval = parent;
 	}
 
 	@Override
-	public Comparable<?> getValue() {
+	public T getValue() {
 		return value;
 	}
 
 	@Override
-	public Collection<IntervalAssociation> getAssociations() {
-		return Collections.unmodifiableCollection(associations);
+	public Interval<T> getInterval() {
+		return interval;
 	}
 
 	@Override
-	public synchronized boolean addAssociation(IntervalAssociation association) {
-		return associations.add(association);
-	}
-
-	@Override
-	public String toString() {
-		return "value=" + value;
-	}
-
-	@Override
-	public int compareTo(Point otherPoint) throws ClassCastException {
-		int result = compareValues(otherPoint.getValue());
-		return result;
-	}
-
-	@SuppressWarnings("unchecked")
-	private <T> int compareValues(Comparable<?> o) {
-		return ((Comparable<T>) value).compareTo((T) o);
+	public PointType getType() {
+		return type;
 	}
 
 }

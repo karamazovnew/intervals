@@ -1,7 +1,6 @@
 package com.vladsoft.intervals.domain.imp;
 
 import com.vladsoft.intervals.domain.Interval;
-import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.PointType;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,47 +15,40 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IntervalImplTest {
+class IntervalImplTest<T extends Comparable<T>> {
 
-	private Interval fixture;
+	private Interval<T> fixture;
 
 	@Mock
-	private Point startPoint, endPoint, firstPoint, secondPoint;
+	private T startPoint, endPoint, firstPoint, secondPoint;
 
 	@BeforeEach
 	void setUp() {
 		when(startPoint.compareTo(endPoint)).thenReturn(-1);
-		fixture = new IntervalImpl(startPoint, endPoint);
+		fixture = new IntervalImpl<T>(startPoint, endPoint);
 	}
 
 	@Test
 	void illegalInterval() {
 		when(firstPoint.compareTo(secondPoint)).thenReturn(1);
 
-		assertThrows(IllegalArgumentException.class, () -> new IntervalImpl(firstPoint, secondPoint));
-	}
-
-	@Test
-	void illegalPoints() {
-		assertThrows(ClassCastException.class, () -> {
-			new IntervalImpl(new PointImpl(2), new PointImpl("foo"));
-		});
+		assertThrows(IllegalArgumentException.class, () -> new IntervalImpl<>(firstPoint, secondPoint));
 	}
 
 	@Test
 	void getStartNode() {
-		IntervalAssociation intervalStart = fixture.getStartPoint();
+		Point<T> intervalStart = fixture.getStartPoint();
 
-		assertThat(intervalStart.getPoint(), is(startPoint));
+		assertThat(intervalStart.getValue(), is(startPoint));
 		assertThat(intervalStart.getInterval(), is(fixture));
 		assertThat(intervalStart.getType(), is(PointType.START));
 	}
 
 	@Test
 	void getEndNode() {
-		IntervalAssociation intervalEnd = fixture.getEndPoint();
+		Point<T> intervalEnd = fixture.getEndPoint();
 
-		assertThat(intervalEnd.getPoint(), is(endPoint));
+		assertThat(intervalEnd.getValue(), is(endPoint));
 		assertThat(intervalEnd.getInterval(), is(fixture));
 		assertThat(intervalEnd.getType(), is(PointType.END));
 	}
@@ -65,7 +57,7 @@ class IntervalImplTest {
 	void getInstantNodes() {
 		when(startPoint.compareTo(endPoint)).thenReturn(0);
 
-		fixture = new IntervalImpl(startPoint, endPoint);
+		fixture = new IntervalImpl<>(startPoint, endPoint);
 
 		assertThat(fixture.getStartPoint().getType(), is(PointType.INSTANT));
 	}

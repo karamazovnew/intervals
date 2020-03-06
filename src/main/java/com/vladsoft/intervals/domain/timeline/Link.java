@@ -1,6 +1,6 @@
 package com.vladsoft.intervals.domain.timeline;
 
-import com.vladsoft.intervals.domain.IntervalAssociation;
+import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.PointType;
 
 import java.util.ArrayList;
@@ -9,42 +9,42 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Link {
+public class Link<T extends Comparable<T>> {
 
-	private Collection<IntervalAssociation> finished;
-	private Collection<IntervalAssociation> ongoing;
+	private Collection<Point<T>> finished;
+	private Collection<Point<T>> ongoing;
 
-	protected Link(IntervalAssociation association, Collection<IntervalAssociation> inherited) {
-		PointType type = association.getType();
+	protected Link(Point<T> point, Collection<Point<T>> inherited) {
+		PointType type = point.getType();
 		switch (type) {
 			case START:
 				ongoing = inherited == null ? new ArrayList<>() : new ArrayList<>(inherited);
-				ongoing.add(association);
+				ongoing.add(point);
 				break;
 			case INSTANT:
-				finished = new ArrayList<>(Collections.singletonList(association));
+				finished = new ArrayList<>(Collections.singletonList(point));
 				ongoing = inherited == null ? null : new ArrayList<>(inherited);
 				break;
 			case END:
-				finished = new ArrayList<>(Collections.singletonList(association));
+				finished = new ArrayList<>(Collections.singletonList(point));
 				ongoing = inherited == null ? null : inherited.stream()
-						.filter(i -> !association.getInterval().equals(i.getInterval())).collect(Collectors.toList());
+						.filter(i -> !point.getInterval().equals(i.getInterval())).collect(Collectors.toList());
 		}
 	}
 
-	protected Collection<IntervalAssociation> getFinished() {
+	protected Collection<Point<T>> getFinished() {
 		return finished;
 	}
 
-	protected Stream<IntervalAssociation> getAllAssociations() {
+	protected Stream<Point<T>> getAllAssociations() {
 		return Stream.concat(finished == null ? Stream.empty() : finished.stream(), ongoing == null ? Stream.empty() : ongoing.stream());
 	}
 
-	protected Collection<IntervalAssociation> getOngoing() {
+	protected Collection<Point<T>> getOngoing() {
 		return ongoing;
 	}
 
-	protected void addAssociation(IntervalAssociation association) {
+	protected void addAssociation(Point<T> association) {
 		if (!association.getType().equals(PointType.START)) {
 			if (finished == null) {
 				finished = new ArrayList<>();

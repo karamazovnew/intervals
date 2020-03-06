@@ -1,7 +1,6 @@
 package com.vladsoft.intervals.domain.timeline;
 
 import com.vladsoft.intervals.domain.Interval;
-import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.Timeline;
 
@@ -12,63 +11,34 @@ import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.stream.Collectors;
 
-public class TimelineImpl implements Timeline {
+public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 
-	private ConcurrentSkipListMap<Comparable<?>, Link> links;
+	private ConcurrentSkipListMap<T, Link<T>> links;
 
 	public TimelineImpl() {
 		links = new ConcurrentSkipListMap<>();
 	}
 
 	@Override
-	public void addInterval(Interval interval) {
-		IntervalAssociation startAssociation = interval.getStartPoint();
-		IntervalAssociation endAssociation = interval.getEndPoint();
-		Point startPoint = startAssociation.getPoint();
-		Point endPoint = endAssociation.getPoint();
-		if (startPoint.compareTo(endPoint) == 0)
-			addPoint(startAssociation);
+	public void addInterval(Interval<T> interval) {
+		Point<T> startPoint = interval.getStartPoint();
+		Point<T> endPoint = interval.getEndPoint();
+		if (startPoint.getValue().compareTo(endPoint.getValue()) == 0)
+			addPoint(startPoint);
 		else {
-			Comparable<?> first = addPoint(startAssociation);
-			Comparable<?> second = addPoint(endAssociation);
-			traverseInheritances(links.subMap(first, false, second, false), startAssociation);
+			T first = addPoint(startPoint);
+			T second = addPoint(endPoint);
+			traverseInheritances(links.subMap(first, false, second, false), startPoint);
 		}
 	}
 
-	private void traverseInheritances(ConcurrentNavigableMap<Comparable<?>, Link> map,
-									  IntervalAssociation association) {
-		map.forEach((key, link) -> {
-			link.addAssociation(association);
-		});
-	}
-
-	@Override
-	public Collection<Interval> getIntervals(Comparable<?> point) {
-		Link link = links.get(point);
-		if (link != null) {
-			return link.getAllAssociations().map(a -> a.getInterval()).collect(Collectors.toList());
-		} else {
-			Map.Entry<Comparable<?>, Link> entry = links.floorEntry(point);
-			if (entry == null || (entry.equals(links.lastEntry())))
-				return Collections.emptyList();
-			else {
-				return entry.getValue().getOngoing().stream().map(a -> a.getInterval()).collect(Collectors.toList());
-			}
-		}
-	}
-
-	@Override
-	public Collection<Interval> getIntervals(Point point) {
-		return getIntervals(point.getValue());
-	}
-
-	private Comparable<?> addPoint(IntervalAssociation point) {
-		Comparable<?> key = point.getPoint().getValue();
-		Link found = links.get(key);
+	private T addPoint(Point<T> point) {
+		T key = point.getValue();
+		Link<T> found = links.get(key);
 		if (found != null) {
 			found.addAssociation(point);
 		} else {
-			Map.Entry<Comparable<?>, Link> previous = links.lowerEntry(key);
+			Map.Entry<T, Link<T>> previous = links.lowerEntry(key);
 			if (previous != null)
 				links.put(key, makeLink(point, previous.getValue().getOngoing()));
 			else
@@ -77,8 +47,34 @@ public class TimelineImpl implements Timeline {
 		return key;
 	}
 
-	private Link makeLink(IntervalAssociation association, Collection<IntervalAssociation> inheritance) {
-		return new Link(association, inheritance);
+	private void traverseInheritances(ConcurrentNavigableMap<T, Link<T>> map, Point<T> association) {
+		map.forEach((key, link) -> {
+			link.addAssociation(association);
+		});
+	}
+
+	@Override
+	public Collection<Interval<T>> getIntervals(T point) {
+		Link<T> link = links.get(point);
+		if (link != null) {
+			return link.getAllAssociations().map(Point::getInterval).collect(Collectors.toList());
+		} else {
+			Map.Entry<T, Link<T>> entry = links.floorEntry(point);
+			if (entry == null || (entry.equals(links.lastEntry())))
+				return Collections.emptyList();
+			else {
+				return entry.getValue().getOngoing().stream().map(Point::getInterval).collect(Collectors.toList());
+			}
+		}
+	}
+
+	@Override
+	public Collection<Interval<T>> getIntervals(Point<T> point) {
+		return getIntervals(point.getValue());
+	}
+
+	private Link<T> makeLink(Point<T> point, Collection<Point<T>> inheritance) {
+		return new Link<>(point, inheritance);
 	}
 
 }

@@ -1,7 +1,9 @@
 package com.vladsoft.intervals.domain.timeline;
 
-import com.vladsoft.intervals.domain.*;
-import com.vladsoft.intervals.domain.imp.PointImpl;
+import com.vladsoft.intervals.domain.Interval;
+import com.vladsoft.intervals.domain.Point;
+import com.vladsoft.intervals.domain.PointType;
+import com.vladsoft.intervals.domain.Timeline;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,15 +18,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TimelineImplTest {
 
-	private Timeline fixture;
-
-	private Point pointA1, pointA2, pointB1, pointB2;
+	private Timeline<Integer> fixture;
 
 	@Mock
-	private Interval intervalA, intervalB;
+	private Interval<Integer> intervalA, intervalB;
 
 	@Mock
-	private IntervalAssociation startA, endA, startB, endB;
+	private Point<Integer> startA, endA, startB, endB;
 
 	@BeforeEach
 	void setUp() {
@@ -36,15 +36,13 @@ class TimelineImplTest {
 		lenient().when(endA.getInterval()).thenReturn(intervalA);
 		lenient().when(startB.getInterval()).thenReturn(intervalB);
 		lenient().when(endB.getInterval()).thenReturn(intervalB);
-		fixture = new TimelineImpl();
+		fixture = new TimelineImpl<>();
 	}
 
 	@Test
 	void addFirstInstantInterval() {
-		pointA1 = new PointImpl(1);
-		pointA2 = new PointImpl(1);
-		when(startA.getPoint()).thenReturn(pointA1);
-		when(endA.getPoint()).thenReturn(pointA2);
+		when(startA.getValue()).thenReturn(1);
+		when(endA.getValue()).thenReturn(1);
 		when(startA.getType()).thenReturn(PointType.INSTANT);
 
 		fixture.addInterval(intervalA);
@@ -54,15 +52,11 @@ class TimelineImplTest {
 
 	@Test
 	void addTwoDifferentInstantIntervals() {
-		pointA1 = new PointImpl(0);
-		pointA2 = new PointImpl(0);
-		pointB1 = new PointImpl(5);
-		pointB2 = new PointImpl(5);
-		when(startA.getPoint()).thenReturn(pointA1);
-		when(endA.getPoint()).thenReturn(pointA2);
+		when(startA.getValue()).thenReturn(0);
+		when(endA.getValue()).thenReturn(0);
 		when(startA.getType()).thenReturn(PointType.INSTANT);
-		when(startB.getPoint()).thenReturn(pointB1);
-		when(endB.getPoint()).thenReturn(pointB2);
+		when(startB.getValue()).thenReturn(5);
+		when(endB.getValue()).thenReturn(5);
 		when(startB.getType()).thenReturn(PointType.INSTANT);
 
 		fixture.addInterval(intervalA);
@@ -74,10 +68,8 @@ class TimelineImplTest {
 
 	@Test
 	void addSimpleInterval() {
-		pointA1 = new PointImpl(2);
-		pointA2 = new PointImpl(4);
-		when(startA.getPoint()).thenReturn(pointA1);
-		when(endA.getPoint()).thenReturn(pointA2);
+		when(startA.getValue()).thenReturn(2);
+		when(endA.getValue()).thenReturn(4);
 		when(startA.getType()).thenReturn(PointType.START);
 		lenient().when(endA.getType()).thenReturn(PointType.END);
 
@@ -92,16 +84,12 @@ class TimelineImplTest {
 
 	@Test
 	void addTwoIntervals() {
-		pointA1 = new PointImpl(3);
-		pointA2 = new PointImpl(5);
-		pointB1 = new PointImpl(2);
-		pointB2 = new PointImpl(6);
-		when(startA.getPoint()).thenReturn(pointA1);
-		when(endA.getPoint()).thenReturn(pointA2);
+		when(startA.getValue()).thenReturn(3);
+		when(endA.getValue()).thenReturn(5);
 		when(startA.getType()).thenReturn(PointType.START);
 		lenient().when(endA.getType()).thenReturn(PointType.END);
-		when(startB.getPoint()).thenReturn(pointB1);
-		when(endB.getPoint()).thenReturn(pointB2);
+		when(startB.getValue()).thenReturn(2);
+		when(endB.getValue()).thenReturn(6);
 		lenient().when(startB.getType()).thenReturn(PointType.START);
 		lenient().when(endB.getType()).thenReturn(PointType.END);
 
@@ -119,37 +107,16 @@ class TimelineImplTest {
 
 	@Test
 	void getIntervalsAtPoint() {
-		pointA1 = new PointImpl(2);
-		pointA2 = new PointImpl(4);
-		when(startA.getPoint()).thenReturn(pointA1);
-		when(endA.getPoint()).thenReturn(pointA2);
+		when(startA.getValue()).thenReturn(2);
+		when(endA.getValue()).thenReturn(4);
 		when(startA.getType()).thenReturn(PointType.START);
 		lenient().when(endA.getType()).thenReturn(PointType.END);
 
 		fixture.addInterval(intervalA);
 
-		assertThat(fixture.getIntervals(new PointImpl(3)), is(fixture.getIntervals(3)));
-		assertThat(fixture.getIntervals(new PointImpl(4)), contains(intervalA));
-		assertThat(fixture.getIntervals(new PointImpl(5)), is(empty()));
-	}
-
-	private class TestValue<T extends Comparable<T>> implements Comparable<TestValue<T>> {
-
-		private T value;
-
-		public TestValue(T value) {
-			this.value = value;
-		}
-
-		public T getValue() {
-			return value;
-		}
-
-		@Override
-		public int compareTo(TestValue<T> o) {
-			return value.compareTo(o.getValue());
-		}
-
+		assertThat(fixture.getIntervals(3), is(fixture.getIntervals(3)));
+		assertThat(fixture.getIntervals(4), contains(intervalA));
+		assertThat(fixture.getIntervals(5), is(empty()));
 	}
 
 }

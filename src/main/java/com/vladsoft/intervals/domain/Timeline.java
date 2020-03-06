@@ -2,12 +2,12 @@ package com.vladsoft.intervals.domain;
 
 import java.util.Collection;
 
-public interface Timeline {
+public interface Timeline<T extends Comparable<T>> {
 
-	void addInterval(Interval interval);
+	void addInterval(Interval<T> interval);
 
-	Collection<Interval> getIntervals(Comparable<?> value);
+	Collection<Interval<T>> getIntervals(T value);
 
-	Collection<Interval> getIntervals(Point point);
+	Collection<Interval<T>> getIntervals(Point<T> point);
 
 }

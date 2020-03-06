@@ -3,7 +3,6 @@ package com.vladsoft.intervals.uat;
 import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Timeline;
 import com.vladsoft.intervals.domain.imp.IntervalImpl;
-import com.vladsoft.intervals.domain.imp.PointImpl;
 import com.vladsoft.intervals.domain.timeline.TimelineImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,9 +12,9 @@ import static org.hamcrest.Matchers.*;
 
 public class TimelineTest {
 
-	private Interval a, b, c, d, e, f, i1, i2;
+	private Interval<Integer> a, b, c, d, e, f, i1, i2;
 
-	private Timeline timeline;
+	private Timeline<Integer> timeline;
 
 	@BeforeEach
 	public void init() {
@@ -28,16 +27,16 @@ public class TimelineTest {
 //		f---f
 //					i1					i2
 
-		a = new IntervalImpl(new PointImpl(1), new PointImpl(7));
-		b = new IntervalImpl(new PointImpl(0), new PointImpl(7));
-		c = new IntervalImpl(new PointImpl(9), new PointImpl(11));
-		d = new IntervalImpl(new PointImpl(5), new PointImpl(9));
-		e = new IntervalImpl(new PointImpl(14), new PointImpl(15));
-		f = new IntervalImpl(new PointImpl(-5), new PointImpl(-2));
-		i1 = new IntervalImpl(new PointImpl(1), new PointImpl(1));
-		i2 = new IntervalImpl(new PointImpl(13), new PointImpl(13));
+		a = new IntervalImpl<>(1, 7);
+		b = new IntervalImpl<>(0, 7);
+		c = new IntervalImpl<>(9, 11);
+		d = new IntervalImpl<>(5, 9);
+		e = new IntervalImpl<>(14, 15);
+		f = new IntervalImpl<>(-5, -2);
+		i1 = new IntervalImpl<>(1, 1);
+		i2 = new IntervalImpl<>(13, 13);
 
-		timeline = new TimelineImpl();
+		timeline = new TimelineImpl<>();
 
 		timeline.addInterval(a);
 		timeline.addInterval(b);

@@ -1,42 +1,41 @@
 package com.vladsoft.intervals.domain.imp;
 
 import com.vladsoft.intervals.domain.Interval;
-import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.PointType;
 
-public class IntervalImpl implements Interval {
+public class IntervalImpl<T extends Comparable<T>> implements Interval<T> {
 
-	private IntervalAssociation startPoint;
-	private IntervalAssociation endPoint;
+	private Point<T> startPoint;
+	private Point<T> endPoint;
 
-	public IntervalImpl(Point startPoint, Point endPoint) throws IllegalArgumentException, ClassCastException {
+	public IntervalImpl(T startPoint, T endPoint) throws IllegalArgumentException {
 		int compare = startPoint.compareTo(endPoint);
 		if (compare > 0)
 			throw new IllegalArgumentException("EndPoint must be after StartPoint");
 		else if (compare == 0) {
-			this.startPoint = new IntervalAssociationImpl(startPoint, PointType.INSTANT, this);
-			this.endPoint = new IntervalAssociationImpl(endPoint, PointType.INSTANT, this);
+			this.startPoint = new PointImpl<>(startPoint, PointType.INSTANT, this);
+			this.endPoint = new PointImpl<>(endPoint, PointType.INSTANT, this);
 		} else {
-			this.startPoint = new IntervalAssociationImpl(startPoint, PointType.START, this);
-			this.endPoint = new IntervalAssociationImpl(endPoint, PointType.END, this);
+			this.startPoint = new PointImpl<>(startPoint, PointType.START, this);
+			this.endPoint = new PointImpl<>(endPoint, PointType.END, this);
 		}
 	}
 
 	@Override
-	public IntervalAssociation getStartPoint() {
+	public Point<T> getStartPoint() {
 		return startPoint;
 	}
 
 	@Override
-	public IntervalAssociation getEndPoint() {
+	public Point<T> getEndPoint() {
 		return endPoint;
 	}
 
 	@Override
 	public String toString() {
-		return "interval [" + startPoint.getPoint().getValue() + "/" +
-				endPoint.getPoint().getValue() + "]";
+		return "interval [" + startPoint.getValue() + "/" +
+				endPoint.getValue() + "]";
 	}
 
 }
