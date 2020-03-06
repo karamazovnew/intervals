@@ -1,9 +1,6 @@
 package com.vladsoft.intervals.domain.timeline;
 
-import com.vladsoft.intervals.domain.Interval;
-import com.vladsoft.intervals.domain.IntervalAssociation;
-import com.vladsoft.intervals.domain.Point;
-import com.vladsoft.intervals.domain.PointType;
+import com.vladsoft.intervals.domain.*;
 import com.vladsoft.intervals.domain.imp.PointImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,8 +16,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TimelineImplTest {
 
-	//implementation only needed for getAssociations method
-	private TimelineImpl fixture;
+	private Timeline fixture;
 
 	private Point pointA1, pointA2, pointB1, pointB2;
 
@@ -53,7 +49,6 @@ class TimelineImplTest {
 		fixture.addInterval(intervalA);
 
 		assertThat(fixture.getIntervals(1), contains(intervalA));
-		assertThat(fixture.getAssociations(pointA1), containsInAnyOrder(startA, endA));
 	}
 
 	@Test
@@ -65,7 +60,6 @@ class TimelineImplTest {
 		when(startA.getPoint()).thenReturn(pointA1);
 		when(endA.getPoint()).thenReturn(pointA2);
 		when(startA.getType()).thenReturn(PointType.INSTANT);
-		when(endA.getType()).thenReturn(PointType.INSTANT);
 		when(startB.getPoint()).thenReturn(pointB1);
 		when(endB.getPoint()).thenReturn(pointB2);
 
@@ -73,9 +67,7 @@ class TimelineImplTest {
 		fixture.addInterval(intervalB);
 
 		assertThat(fixture.getIntervals(0), contains(intervalA));
-		assertThat(fixture.getAssociations(pointA1), containsInAnyOrder(startA, endA));
 		assertThat(fixture.getIntervals(5), contains(intervalB));
-		assertThat(fixture.getAssociations(pointB1), containsInAnyOrder(startB, endB));
 	}
 
 	@Test

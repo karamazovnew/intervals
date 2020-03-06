@@ -5,7 +5,6 @@ import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.Timeline;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -50,11 +49,6 @@ public class TimelineImpl implements Timeline {
 			return Collections.emptyList();
 		else
 			return found.getValue().getAllAssociations().map(a -> a.getInterval()).collect(Collectors.toSet());
-	}
-
-	//for test only
-	protected Collection<IntervalAssociation> getAssociations(Point point) {
-		return links.get(point.getValue()).getAllAssociations().collect(Collectors.toList());
 	}
 
 	private void addInstantInterval(IntervalAssociation association) {
