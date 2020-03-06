@@ -6,6 +6,8 @@ public interface Timeline {
 
 	void addInterval(Interval interval);
 
-	Collection<Interval> getIntervals(Comparable<?> point);
+	Collection<Interval> getIntervals(Comparable<?> value);
+
+	Collection<Interval> getIntervals(Point point);
 
 }

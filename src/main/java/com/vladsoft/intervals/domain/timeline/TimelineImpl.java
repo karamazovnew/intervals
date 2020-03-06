@@ -44,11 +44,22 @@ public class TimelineImpl implements Timeline {
 
 	@Override
 	public Collection<Interval> getIntervals(Comparable<?> point) {
-		Map.Entry<Comparable<?>, Link> found = links.floorEntry(point);
-		if (found == null || (found.equals(links.lastEntry()) && links.get(point) == null))
-			return Collections.emptyList();
-		else
-			return found.getValue().getAllAssociations().map(a -> a.getInterval()).collect(Collectors.toSet());
+		Link link = links.get(point);
+		if (link != null) {
+			return link.getAllAssociations().map(a -> a.getInterval()).collect(Collectors.toList());
+		} else {
+			Map.Entry<Comparable<?>, Link> entry = links.floorEntry(point);
+			if (entry == null || (entry.equals(links.lastEntry())))
+				return Collections.emptyList();
+			else {
+				return entry.getValue().getInheritance().stream().map(a -> a.getInterval()).collect(Collectors.toList());
+			}
+		}
+	}
+
+	@Override
+	public Collection<Interval> getIntervals(Point point) {
+		return getIntervals(point.getValue());
 	}
 
 	private void addInstantInterval(IntervalAssociation association) {

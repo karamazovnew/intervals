@@ -115,6 +115,22 @@ class TimelineImplTest {
 		assertThat(fixture.getIntervals(7), empty());
 	}
 
+	@Test
+	void getIntervalsAtPoint() {
+		pointA1 = new PointImpl(2);
+		pointA2 = new PointImpl(4);
+		when(startA.getPoint()).thenReturn(pointA1);
+		when(endA.getPoint()).thenReturn(pointA2);
+		when(startA.getType()).thenReturn(PointType.START);
+		lenient().when(endA.getType()).thenReturn(PointType.END);
+
+		fixture.addInterval(intervalA);
+
+		assertThat(fixture.getIntervals(new PointImpl(3)), is(fixture.getIntervals(3)));
+		assertThat(fixture.getIntervals(new PointImpl(4)), contains(intervalA));
+		assertThat(fixture.getIntervals(new PointImpl(5)), is(empty()));
+	}
+
 	private class TestValue<T extends Comparable<T>> implements Comparable<TestValue<T>> {
 
 		private T value;
