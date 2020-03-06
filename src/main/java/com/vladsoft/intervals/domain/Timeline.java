@@ -8,6 +8,4 @@ public interface Timeline<T extends Comparable<T>> {
 
 	Collection<Interval<T>> getIntervals(T value);
 
-	Collection<Interval<T>> getIntervals(Point<T> point);
-
 }

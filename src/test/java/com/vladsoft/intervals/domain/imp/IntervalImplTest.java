@@ -2,13 +2,13 @@ package com.vladsoft.intervals.domain.imp;
 
 import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Point;
-import com.vladsoft.intervals.domain.PointType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.vladsoft.intervals.domain.PointType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,7 +41,7 @@ class IntervalImplTest<T extends Comparable<T>> {
 
 		assertThat(intervalStart.getValue(), is(startPoint));
 		assertThat(intervalStart.getInterval(), is(fixture));
-		assertThat(intervalStart.getType(), is(PointType.START));
+		assertThat(intervalStart.getType(), is(START));
 	}
 
 	@Test
@@ -50,7 +50,7 @@ class IntervalImplTest<T extends Comparable<T>> {
 
 		assertThat(intervalEnd.getValue(), is(endPoint));
 		assertThat(intervalEnd.getInterval(), is(fixture));
-		assertThat(intervalEnd.getType(), is(PointType.END));
+		assertThat(intervalEnd.getType(), is(END));
 	}
 
 	@Test
@@ -59,7 +59,7 @@ class IntervalImplTest<T extends Comparable<T>> {
 
 		fixture = new IntervalImpl<>(startPoint, endPoint);
 
-		assertThat(fixture.getStartPoint().getType(), is(PointType.INSTANT));
+		assertThat(fixture.getStartPoint().getType(), is(INSTANT));
 	}
 
 }

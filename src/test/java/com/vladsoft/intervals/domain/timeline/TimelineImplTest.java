@@ -2,7 +2,6 @@ package com.vladsoft.intervals.domain.timeline;
 
 import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Point;
-import com.vladsoft.intervals.domain.PointType;
 import com.vladsoft.intervals.domain.Timeline;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.vladsoft.intervals.domain.PointType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.lenient;
@@ -43,7 +43,7 @@ class TimelineImplTest {
 	void addFirstInstantInterval() {
 		when(startA.getValue()).thenReturn(1);
 		when(endA.getValue()).thenReturn(1);
-		when(startA.getType()).thenReturn(PointType.INSTANT);
+		when(startA.getType()).thenReturn(INSTANT);
 
 		fixture.addInterval(intervalA);
 
@@ -54,10 +54,10 @@ class TimelineImplTest {
 	void addTwoDifferentInstantIntervals() {
 		when(startA.getValue()).thenReturn(0);
 		when(endA.getValue()).thenReturn(0);
-		when(startA.getType()).thenReturn(PointType.INSTANT);
+		when(startA.getType()).thenReturn(INSTANT);
 		when(startB.getValue()).thenReturn(5);
 		when(endB.getValue()).thenReturn(5);
-		when(startB.getType()).thenReturn(PointType.INSTANT);
+		when(startB.getType()).thenReturn(INSTANT);
 
 		fixture.addInterval(intervalA);
 		fixture.addInterval(intervalB);
@@ -70,8 +70,8 @@ class TimelineImplTest {
 	void addSimpleInterval() {
 		when(startA.getValue()).thenReturn(2);
 		when(endA.getValue()).thenReturn(4);
-		when(startA.getType()).thenReturn(PointType.START);
-		lenient().when(endA.getType()).thenReturn(PointType.END);
+		when(startA.getType()).thenReturn(START);
+		lenient().when(endA.getType()).thenReturn(END);
 
 		fixture.addInterval(intervalA);
 
@@ -86,12 +86,12 @@ class TimelineImplTest {
 	void addTwoIntervals() {
 		when(startA.getValue()).thenReturn(3);
 		when(endA.getValue()).thenReturn(5);
-		when(startA.getType()).thenReturn(PointType.START);
-		lenient().when(endA.getType()).thenReturn(PointType.END);
+		when(startA.getType()).thenReturn(START);
+		lenient().when(endA.getType()).thenReturn(END);
 		when(startB.getValue()).thenReturn(2);
 		when(endB.getValue()).thenReturn(6);
-		lenient().when(startB.getType()).thenReturn(PointType.START);
-		lenient().when(endB.getType()).thenReturn(PointType.END);
+		lenient().when(startB.getType()).thenReturn(START);
+		lenient().when(endB.getType()).thenReturn(END);
 
 		fixture.addInterval(intervalA);
 		fixture.addInterval(intervalB);
@@ -103,20 +103,6 @@ class TimelineImplTest {
 		assertThat(fixture.getIntervals(5), containsInAnyOrder(intervalA, intervalB));
 		assertThat(fixture.getIntervals(6), contains(intervalB));
 		assertThat(fixture.getIntervals(7), empty());
-	}
-
-	@Test
-	void getIntervalsAtPoint() {
-		when(startA.getValue()).thenReturn(2);
-		when(endA.getValue()).thenReturn(4);
-		when(startA.getType()).thenReturn(PointType.START);
-		lenient().when(endA.getType()).thenReturn(PointType.END);
-
-		fixture.addInterval(intervalA);
-
-		assertThat(fixture.getIntervals(3), is(fixture.getIntervals(3)));
-		assertThat(fixture.getIntervals(4), contains(intervalA));
-		assertThat(fixture.getIntervals(5), is(empty()));
 	}
 
 }

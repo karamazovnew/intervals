@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.vladsoft.intervals.domain.PointType.START;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -27,7 +28,7 @@ class PointImplTest<T extends Comparable<T>> {
 
 	@BeforeEach
 	void init() {
-		pointType = PointType.START;
+		pointType = START;
 		fixture = new PointImpl<T>(value, pointType, parent);
 	}
 
