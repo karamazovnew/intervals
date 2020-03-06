@@ -3,7 +3,6 @@ package com.vladsoft.intervals.domain.timeline;
 import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.IntervalAssociation;
 import com.vladsoft.intervals.domain.PointType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -28,72 +27,105 @@ class LinkTest {
 	private IntervalAssociation inherited1, inherited2, inherited3;
 
 	@Mock
-	private Interval interval;
+	private Interval interval, otherInterval;
 
-	@BeforeEach
-	void setUp() {
-		fixture = new Link(Arrays.asList(association1, association2),
-				Arrays.asList(inherited1, inherited2));
+	@Test
+	void newInstant() {
+		when(association1.getType()).thenReturn(PointType.INSTANT);
+
+		fixture = new Link(association1, null);
+
+		assertThat(fixture.getFinished(), containsInAnyOrder(association1));
+		assertThat(fixture.getOngoing(), is(nullValue()));
+		assertThat(fixture.getAllAssociations().collect(Collectors.toList()),
+				contains(association1));
 	}
 
 	@Test
-	void getAssociations() {
-		assertThat(fixture.getAssociations(),
-				containsInAnyOrder(association1, association2));
-	}
+	void newInstantWithInheritance() {
+		when(association1.getType()).thenReturn(PointType.INSTANT);
 
-	@Test
-	void getInheritanceIgnoreEnds() {
-		when(association1.getType()).thenReturn(PointType.START);
-		when(association2.getType()).thenReturn(PointType.END);
+		fixture = new Link(association1, Arrays.asList(inherited1, inherited2));
 
-		assertThat(fixture.getInheritance(),
+		assertThat(fixture.getFinished(), containsInAnyOrder(association1));
+		assertThat(fixture.getOngoing(), containsInAnyOrder(inherited1, inherited2));
+		assertThat(fixture.getAllAssociations().collect(Collectors.toList()),
 				containsInAnyOrder(association1, inherited1, inherited2));
 	}
 
 	@Test
-	void getInheritanceIgnoreInstants() {
-		when(association1.getType()).thenReturn(PointType.INSTANT);
-		when(association2.getType()).thenReturn(PointType.INSTANT);
+	void newEnd() {
+		when(association1.getType()).thenReturn(PointType.END);
 
-		assertThat(fixture.getInheritance(),
-				containsInAnyOrder(inherited1, inherited2));
-	}
+		fixture = new Link(association1, null);
 
-	@Test
-	void getAllAssociations() {
+		assertThat(fixture.getFinished(), containsInAnyOrder(association1));
+		assertThat(fixture.getOngoing(), is(nullValue()));
 		assertThat(fixture.getAllAssociations().collect(Collectors.toList()),
-				containsInAnyOrder(association1, association2, inherited1, inherited2));
+				contains(association1));
 	}
 
 	@Test
-	void addAssociation() {
-		fixture.addAssociation(association3);
-
-		assertThat(fixture.getAssociations(), hasItem(association3));
-	}
-
-	@Test
-	void addInheritance() {
-		when(association1.getType()).thenReturn(PointType.START); //value not important, prevents NPE during test
-		when(association2.getType()).thenReturn(PointType.START); //value not important, prevents NPE during test
-
-		fixture.addInheritance(inherited3);
-
-		assertThat(fixture.getInheritance(), hasItem(inherited3));
-	}
-
-	@Test
-	void endPointFiltersKnownInterval() {
+	void newEndWithInheritance() {
 		when(association1.getType()).thenReturn(PointType.END);
 		when(association1.getInterval()).thenReturn(interval);
-		when(inherited2.getInterval()).thenReturn(interval);
+		when(inherited1.getInterval()).thenReturn(interval);
+		when(inherited2.getInterval()).thenReturn(otherInterval);
 
 		fixture = new Link(association1, Arrays.asList(inherited1, inherited2));
 
-		assertThat(fixture.getInheritance(), contains(inherited1));
+		assertThat(fixture.getFinished(), containsInAnyOrder(association1));
+		assertThat(fixture.getOngoing(), contains(inherited2));
 		assertThat(fixture.getAllAssociations().collect(Collectors.toList()),
-				containsInAnyOrder(association1, inherited1));
+				containsInAnyOrder(association1, inherited2));
+	}
+
+	@Test
+	void newStart() {
+		when(association1.getType()).thenReturn(PointType.START);
+
+		fixture = new Link(association1, null);
+
+		assertThat(fixture.getOngoing(), containsInAnyOrder(association1));
+		assertThat(fixture.getFinished(), is(nullValue()));
+		assertThat(fixture.getAllAssociations().collect(Collectors.toList()),
+				contains(association1));
+	}
+
+	@Test
+	void newStartWithInheritance() {
+		when(association1.getType()).thenReturn(PointType.START);
+
+		fixture = new Link(association1, Arrays.asList(inherited1, inherited2));
+
+		assertThat(fixture.getOngoing(), containsInAnyOrder(association1, inherited1, inherited2));
+		assertThat(fixture.getFinished(), is(nullValue()));
+		assertThat(fixture.getAllAssociations().collect(Collectors.toList()),
+				containsInAnyOrder(association1, inherited1, inherited2));
+	}
+
+	@Test
+	void addStartAssociation() {
+		when(association1.getType()).thenReturn(PointType.START);
+		when(association2.getType()).thenReturn(PointType.START);
+
+		fixture = new Link(association1, null);
+		fixture.addAssociation(association2);
+
+		assertThat(fixture.getOngoing(), hasItem(association2));
+	}
+
+	@Test
+	void addNonStartAssociation() {
+		when(association1.getType()).thenReturn(PointType.START);
+		when(association2.getType()).thenReturn(PointType.INSTANT);
+		when(association3.getType()).thenReturn(PointType.END);
+
+		fixture = new Link(association1, null);
+		fixture.addAssociation(association2);
+		fixture.addAssociation(association3);
+
+		assertThat(fixture.getFinished(), hasItems(association2, association3));
 	}
 
 }

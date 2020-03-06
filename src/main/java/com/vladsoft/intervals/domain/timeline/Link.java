@@ -11,50 +11,50 @@ import java.util.stream.Stream;
 
 public class Link {
 
-	private Collection<IntervalAssociation> associations;
-	private Collection<IntervalAssociation> inherited;
+	private Collection<IntervalAssociation> finished;
+	private Collection<IntervalAssociation> ongoing;
 
-	//used only for instant interval points
-	protected Link(Collection<IntervalAssociation> associations, Collection<IntervalAssociation> inheritance) {
-		this.associations = new ArrayList<>(associations);
-		if (inheritance != null)
-			inherited = new ArrayList<>(inheritance);
-		else
-			inherited = new ArrayList<>();
+	protected Link(IntervalAssociation association, Collection<IntervalAssociation> inherited) {
+		PointType type = association.getType();
+		switch (type) {
+			case START:
+				ongoing = inherited == null ? new ArrayList<>() : new ArrayList<>(inherited);
+				ongoing.add(association);
+				break;
+			case INSTANT:
+				finished = new ArrayList<>(Collections.singletonList(association));
+				ongoing = inherited == null ? null : new ArrayList<>(inherited);
+				break;
+			case END:
+				finished = new ArrayList<>(Collections.singletonList(association));
+				ongoing = inherited == null ? null : inherited.stream()
+						.filter(i -> !association.getInterval().equals(i.getInterval())).collect(Collectors.toList());
+		}
 	}
 
-	protected Link(IntervalAssociation association, Collection<IntervalAssociation> inheritance) {
-		associations = new ArrayList<>(Collections.singletonList(association));
-		if (inheritance == null)
-			inherited = new ArrayList<>();
-		else if (association.getType().equals(PointType.END))
-			inherited = inheritance.stream()
-					.filter(i -> !association.getInterval().equals(i.getInterval())).collect(Collectors.toList());
-		else
-			inherited = new ArrayList<>(inheritance);
-
-	}
-
-	protected Collection<IntervalAssociation> getAssociations() {
-		return associations;
+	protected Collection<IntervalAssociation> getFinished() {
+		return finished;
 	}
 
 	protected Stream<IntervalAssociation> getAllAssociations() {
-		return Stream.concat(associations.stream(), inherited.stream());
+		return Stream.concat(finished == null ? Stream.empty() : finished.stream(), ongoing == null ? Stream.empty() : ongoing.stream());
 	}
 
-	protected Collection<IntervalAssociation> getInheritance() {
-		return Stream.concat(associations.stream().filter(a -> a.getType().equals(PointType.START)),
-				inherited.stream())
-				.collect(Collectors.toList());
+	protected Collection<IntervalAssociation> getOngoing() {
+		return ongoing;
 	}
 
 	protected void addAssociation(IntervalAssociation association) {
-		associations.add(association);
-	}
-
-	protected void addInheritance(IntervalAssociation inheritance) {
-		inherited.add(inheritance);
+		if (!association.getType().equals(PointType.START)) {
+			if (finished == null) {
+				finished = new ArrayList<>();
+			}
+			finished.add(association);
+		} else {
+			if (ongoing == null)
+				ongoing = new ArrayList<>();
+			ongoing.add(association);
+		}
 	}
 
 }

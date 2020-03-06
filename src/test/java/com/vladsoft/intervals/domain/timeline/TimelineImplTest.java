@@ -45,6 +45,7 @@ class TimelineImplTest {
 		pointA2 = new PointImpl(1);
 		when(startA.getPoint()).thenReturn(pointA1);
 		when(endA.getPoint()).thenReturn(pointA2);
+		when(startA.getType()).thenReturn(PointType.INSTANT);
 
 		fixture.addInterval(intervalA);
 
@@ -62,6 +63,7 @@ class TimelineImplTest {
 		when(startA.getType()).thenReturn(PointType.INSTANT);
 		when(startB.getPoint()).thenReturn(pointB1);
 		when(endB.getPoint()).thenReturn(pointB2);
+		when(startB.getType()).thenReturn(PointType.INSTANT);
 
 		fixture.addInterval(intervalA);
 		fixture.addInterval(intervalB);

@@ -27,7 +27,7 @@ public class TimelineImpl implements Timeline {
 		Point startPoint = startAssociation.getPoint();
 		Point endPoint = endAssociation.getPoint();
 		if (startPoint.compareTo(endPoint) == 0)
-			addInstantInterval(startAssociation);
+			addPoint(startAssociation);
 		else {
 			Comparable<?> first = addPoint(startAssociation);
 			Comparable<?> second = addPoint(endAssociation);
@@ -38,7 +38,7 @@ public class TimelineImpl implements Timeline {
 	private void traverseInheritances(ConcurrentNavigableMap<Comparable<?>, Link> map,
 									  IntervalAssociation association) {
 		map.forEach((key, link) -> {
-			link.addInheritance(association);
+			link.addAssociation(association);
 		});
 	}
 
@@ -52,7 +52,7 @@ public class TimelineImpl implements Timeline {
 			if (entry == null || (entry.equals(links.lastEntry())))
 				return Collections.emptyList();
 			else {
-				return entry.getValue().getInheritance().stream().map(a -> a.getInterval()).collect(Collectors.toList());
+				return entry.getValue().getOngoing().stream().map(a -> a.getInterval()).collect(Collectors.toList());
 			}
 		}
 	}
@@ -60,22 +60,6 @@ public class TimelineImpl implements Timeline {
 	@Override
 	public Collection<Interval> getIntervals(Point point) {
 		return getIntervals(point.getValue());
-	}
-
-	private void addInstantInterval(IntervalAssociation association) {
-		Comparable<?> key = association.getPoint().getValue();
-		Link found = links.get(key);
-		if (found != null) {
-			found.addAssociation(association);
-		} else {
-			Map.Entry<Comparable<?>, Link> previous = links.lowerEntry(key);
-			if (previous != null)
-				links.put(key, makeLink(Collections.singletonList(association),
-						previous.getValue().getInheritance()));
-			else
-				links.put(key, makeLink(Collections.singletonList(association),
-						null));
-		}
 	}
 
 	private Comparable<?> addPoint(IntervalAssociation point) {
@@ -86,15 +70,11 @@ public class TimelineImpl implements Timeline {
 		} else {
 			Map.Entry<Comparable<?>, Link> previous = links.lowerEntry(key);
 			if (previous != null)
-				links.put(key, makeLink(point, previous.getValue().getInheritance()));
+				links.put(key, makeLink(point, previous.getValue().getOngoing()));
 			else
 				links.put(key, makeLink(point, null));
 		}
 		return key;
-	}
-
-	private Link makeLink(Collection<IntervalAssociation> associations, Collection<IntervalAssociation> inheritance) {
-		return new Link(associations, inheritance);
 	}
 
 	private Link makeLink(IntervalAssociation association, Collection<IntervalAssociation> inheritance) {
