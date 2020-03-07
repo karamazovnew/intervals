@@ -15,6 +15,7 @@ class IntervalsApplicationTests {
 		StressTester test = new StressTester();
 		test.insertIntervals();
 		test.getIntervals();
+		test.getMaxIntervals();
 	}
 
 }
