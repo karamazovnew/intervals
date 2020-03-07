@@ -4,6 +4,7 @@ import com.vladsoft.intervals.domain.Interval;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class Link<T extends Comparable<T>> {
 
@@ -11,17 +12,17 @@ public class Link<T extends Comparable<T>> {
 
 	//START link
 	protected Link(Interval<T> interval, Collection<Interval<T>> inherited) {
-		intervals = inherited == null ? new ArrayList<>() : new ArrayList<>(inherited);
+		intervals = (inherited == null || inherited.isEmpty()) ? new ArrayList<>() : new ArrayList<>(inherited);
 		intervals.add(interval);
 	}
 
 	//END link
 	protected Link(Collection<Interval<T>> inherited) {
-		intervals = inherited == null ? null : new ArrayList<>(inherited);
+		intervals = (inherited == null || inherited.isEmpty()) ? null : new ArrayList<>(inherited);
 	}
 
 	protected Collection<Interval<T>> getIntervals() {
-		return intervals;
+		return intervals != null ? intervals : Collections.emptyList();
 	}
 
 	protected void addInterval(Interval<T> interval) {

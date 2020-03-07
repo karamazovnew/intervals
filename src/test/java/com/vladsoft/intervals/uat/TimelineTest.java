@@ -71,6 +71,10 @@ public class TimelineTest {
 		assertThat(timeline.getIntervals(14), contains(e));
 		assertThat(timeline.getIntervals(15), empty());
 		assertThat(timeline.getIntervals(16), empty());
+
+		assertThat(timeline.getIntervals(-6, 16), containsInAnyOrder(a, b, c, d, e, f, g));
+		assertThat(timeline.getIntervals(2, 8), containsInAnyOrder(a, b, d, g));
+		assertThat(timeline.getIntervals(11, 14), empty());
 	}
 
 }

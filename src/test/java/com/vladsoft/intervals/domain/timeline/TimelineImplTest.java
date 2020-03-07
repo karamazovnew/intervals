@@ -54,6 +54,11 @@ class TimelineImplTest {
 		assertThat(fixture.getIntervals(3), contains(intervalA));
 		assertThat(fixture.getIntervals(4), empty());
 		assertThat(fixture.getIntervals(5), empty());
+
+		assertThat(fixture.getIntervals(2,4), contains(intervalA));
+		assertThat(fixture.getIntervals(3,5), contains(intervalA));
+		assertThat(fixture.getIntervals(1,2), empty());
+		assertThat(fixture.getIntervals(1,5), contains(intervalA));
 	}
 
 	@Test
@@ -77,6 +82,17 @@ class TimelineImplTest {
 		assertThat(fixture.getIntervals(5), contains(intervalB));
 		assertThat(fixture.getIntervals(6), empty());
 		assertThat(fixture.getIntervals(7), empty());
+
+		assertThat(fixture.getIntervals(2,3), contains(intervalB));
+		assertThat(fixture.getIntervals(1,7), containsInAnyOrder(intervalA, intervalB));
+		assertThat(fixture.getIntervals(2,5), containsInAnyOrder(intervalA, intervalB));
+		assertThat(fixture.getIntervals(5,9), contains(intervalB));
+		assertThat(fixture.getIntervals(6,9), empty());
+	}
+
+	@Test
+	void getIntervalsBetweenPointsWhenTimelineEmpty(){
+		assertThat(fixture.getIntervals(1,7),is(empty()));
 	}
 
 }
