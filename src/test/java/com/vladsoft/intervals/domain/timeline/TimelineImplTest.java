@@ -9,7 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.vladsoft.intervals.domain.PointType.*;
+import static com.vladsoft.intervals.domain.PointType.END;
+import static com.vladsoft.intervals.domain.PointType.START;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.lenient;
@@ -40,33 +41,6 @@ class TimelineImplTest {
 	}
 
 	@Test
-	void addFirstInstantInterval() {
-		when(startA.getValue()).thenReturn(1);
-		when(endA.getValue()).thenReturn(1);
-		when(startA.getType()).thenReturn(INSTANT);
-
-		fixture.addInterval(intervalA);
-
-		assertThat(fixture.getIntervals(1), contains(intervalA));
-	}
-
-	@Test
-	void addTwoDifferentInstantIntervals() {
-		when(startA.getValue()).thenReturn(0);
-		when(endA.getValue()).thenReturn(0);
-		when(startA.getType()).thenReturn(INSTANT);
-		when(startB.getValue()).thenReturn(5);
-		when(endB.getValue()).thenReturn(5);
-		when(startB.getType()).thenReturn(INSTANT);
-
-		fixture.addInterval(intervalA);
-		fixture.addInterval(intervalB);
-
-		assertThat(fixture.getIntervals(0), contains(intervalA));
-		assertThat(fixture.getIntervals(5), contains(intervalB));
-	}
-
-	@Test
 	void addSimpleInterval() {
 		when(startA.getValue()).thenReturn(2);
 		when(endA.getValue()).thenReturn(4);
@@ -78,7 +52,7 @@ class TimelineImplTest {
 		assertThat(fixture.getIntervals(1), empty());
 		assertThat(fixture.getIntervals(2), contains(intervalA));
 		assertThat(fixture.getIntervals(3), contains(intervalA));
-		assertThat(fixture.getIntervals(4), contains(intervalA));
+		assertThat(fixture.getIntervals(4), empty());
 		assertThat(fixture.getIntervals(5), empty());
 	}
 
@@ -100,8 +74,8 @@ class TimelineImplTest {
 		assertThat(fixture.getIntervals(2), contains(intervalB));
 		assertThat(fixture.getIntervals(3), containsInAnyOrder(intervalA, intervalB));
 		assertThat(fixture.getIntervals(4), containsInAnyOrder(intervalA, intervalB));
-		assertThat(fixture.getIntervals(5), containsInAnyOrder(intervalA, intervalB));
-		assertThat(fixture.getIntervals(6), contains(intervalB));
+		assertThat(fixture.getIntervals(5), contains(intervalB));
+		assertThat(fixture.getIntervals(6), empty());
 		assertThat(fixture.getIntervals(7), empty());
 	}
 

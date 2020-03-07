@@ -8,7 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.vladsoft.intervals.domain.PointType.*;
+import static com.vladsoft.intervals.domain.PointType.END;
+import static com.vladsoft.intervals.domain.PointType.START;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,7 +21,7 @@ class IntervalImplTest<T extends Comparable<T>> {
 	private Interval<T> fixture;
 
 	@Mock
-	private T startPoint, endPoint, firstPoint, secondPoint;
+	private T startPoint, endPoint;
 
 	@BeforeEach
 	void setUp() {
@@ -30,9 +31,16 @@ class IntervalImplTest<T extends Comparable<T>> {
 
 	@Test
 	void illegalInterval() {
-		when(firstPoint.compareTo(secondPoint)).thenReturn(1);
+		when(startPoint.compareTo(endPoint)).thenReturn(1);
 
-		assertThrows(IllegalArgumentException.class, () -> new IntervalImpl<>(firstPoint, secondPoint));
+		assertThrows(IllegalArgumentException.class, () -> new IntervalImpl<>(startPoint, endPoint));
+	}
+
+	@Test
+	void illegalInstantInterval() {
+		when(startPoint.compareTo(endPoint)).thenReturn(0);
+
+		assertThrows(IllegalArgumentException.class, () -> new IntervalImpl<>(startPoint, endPoint));
 	}
 
 	@Test
@@ -51,15 +59,6 @@ class IntervalImplTest<T extends Comparable<T>> {
 		assertThat(intervalEnd.getValue(), is(endPoint));
 		assertThat(intervalEnd.getInterval(), is(fixture));
 		assertThat(intervalEnd.getType(), is(END));
-	}
-
-	@Test
-	void getInstantNodes() {
-		when(startPoint.compareTo(endPoint)).thenReturn(0);
-
-		fixture = new IntervalImpl<>(startPoint, endPoint);
-
-		assertThat(fixture.getStartPoint().getType(), is(INSTANT));
 	}
 
 }
