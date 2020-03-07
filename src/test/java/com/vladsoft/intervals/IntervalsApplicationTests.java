@@ -10,4 +10,11 @@ class IntervalsApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void runStressTest() {
+		StressTester test = new StressTester();
+		test.insertIntervals();
+		test.getIntervals();
+	}
+
 }
