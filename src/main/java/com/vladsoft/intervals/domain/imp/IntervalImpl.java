@@ -10,13 +10,9 @@ public class IntervalImpl<T extends Comparable<T>> implements Interval<T> {
 	private Point<T> endPoint;
 
 	public IntervalImpl(T startPoint, T endPoint) throws IllegalArgumentException {
-		int compare = startPoint.compareTo(endPoint);
-		if (compare > 0)
+		if (startPoint.compareTo(endPoint) >= 0)
 			throw new IllegalArgumentException("EndPoint must be after StartPoint");
-		else if (compare == 0) {
-			this.startPoint = new PointImpl<>(startPoint, PointType.INSTANT, this);
-			this.endPoint = new PointImpl<>(endPoint, PointType.INSTANT, this);
-		} else {
+		else {
 			this.startPoint = new PointImpl<>(startPoint, PointType.START, this);
 			this.endPoint = new PointImpl<>(endPoint, PointType.END, this);
 		}
