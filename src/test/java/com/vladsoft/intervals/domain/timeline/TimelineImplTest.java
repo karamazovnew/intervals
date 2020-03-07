@@ -47,6 +47,8 @@ class TimelineImplTest {
 		when(startA.getType()).thenReturn(START);
 		lenient().when(endA.getType()).thenReturn(END);
 
+		assertThat(fixture.getIntervalsNumber(), is(0));
+
 		fixture.addInterval(intervalA);
 
 		assertThat(fixture.getIntervals(1), empty());
@@ -59,6 +61,8 @@ class TimelineImplTest {
 		assertThat(fixture.getIntervals(3,5), contains(intervalA));
 		assertThat(fixture.getIntervals(1,2), empty());
 		assertThat(fixture.getIntervals(1,5), contains(intervalA));
+
+		assertThat(fixture.getIntervalsNumber(), is(1));
 	}
 
 	@Test
@@ -88,11 +92,21 @@ class TimelineImplTest {
 		assertThat(fixture.getIntervals(2,5), containsInAnyOrder(intervalA, intervalB));
 		assertThat(fixture.getIntervals(5,9), contains(intervalB));
 		assertThat(fixture.getIntervals(6,9), empty());
+
+		assertThat(fixture.getMaxOverlapping(1,7), is(2));
+		assertThat(fixture.getMaxOverlapping(5,6), is(1));
+
+		assertThat(fixture.getIntervalsNumber(), is(2));
 	}
 
 	@Test
 	void getIntervalsBetweenPointsWhenTimelineEmpty(){
 		assertThat(fixture.getIntervals(1,7),is(empty()));
+	}
+
+	@Test
+	void getMaxIntervalsWhenTimelineEmpty(){
+		assertThat(fixture.getMaxOverlapping(1,7), is(0));
 	}
 
 }

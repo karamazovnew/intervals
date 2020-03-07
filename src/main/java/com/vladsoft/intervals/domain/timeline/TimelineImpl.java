@@ -16,9 +16,11 @@ import static com.vladsoft.intervals.domain.PointType.START;
 public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 
 	private ConcurrentSkipListMap<T, Link<T>> links;
+	private int intervalsNumber;
 
 	public TimelineImpl() {
 		links = new ConcurrentSkipListMap<>();
+		intervalsNumber = 0;
 	}
 
 	@Override
@@ -26,6 +28,7 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 		T first = addStartPoint(interval.getStartPoint());
 		T second = addEndPoint(interval.getEndPoint());
 		traverseInheritances(links.subMap(first, false, second, false), interval);
+		intervalsNumber++;
 	}
 
 	private T addStartPoint(Point<T> point) {
@@ -94,6 +97,34 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 		if(endAdded)
 			links.remove(endPoint);
 		return result;
+	}
+
+	@Override
+	public int getMaxOverlapping(T startPoint, T endPoint) {
+		if(links.size()==0)
+			return 0;
+		boolean startAdded=false;
+		boolean endAdded=false;
+		if (startPoint.compareTo(links.firstKey())<0 || startPoint.compareTo(links.lastKey()) >0) {
+			links.put(startPoint, new Link<>(null));
+			startAdded = true;
+		}
+		if (endPoint.compareTo(links.firstKey())<0 || endPoint.compareTo(links.lastKey()) >0) {
+			links.put(endPoint, new Link<>(null));
+			endAdded = true;
+		}
+		int result = links.subMap(links.floorKey(startPoint), endPoint)
+				.values().stream().map(l->l.getIntervals().size()).max(Integer::compareTo).orElse(0);
+		if(startAdded)
+			links.remove(startPoint);
+		if(endAdded)
+			links.remove(endPoint);
+		return result;
+	}
+
+	@Override
+	public int getIntervalsNumber() {
+		return intervalsNumber;
 	}
 
 	private Link<T> makeLink(Point<T> point, Collection<Interval<T>> inheritance) {
