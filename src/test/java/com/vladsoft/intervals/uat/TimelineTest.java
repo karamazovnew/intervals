@@ -76,8 +76,8 @@ public class TimelineTest {
 		assertThat(timeline.getIntervals(2, 8), containsInAnyOrder(a, b, d, g));
 		assertThat(timeline.getIntervals(11, 14), empty());
 
-		assertThat(timeline.getMaxOverlapping(-6,16), is(3));
-		assertThat(timeline.getMaxOverlapping(0,1), is(2));
+		assertThat(timeline.getMaxOverlaps(-6,16), is(3));
+		assertThat(timeline.getMaxOverlaps(0,1), is(2));
 
 		assertThat(timeline.getIntervalsNumber(), is(7));
 	}

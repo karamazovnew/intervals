@@ -78,48 +78,38 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 
 	@Override
 	public Collection<Interval<T>> getIntervals(T startPoint, T endPoint) {
-		if(links.size()==0)
+		if (links.size() == 0)
 			return Collections.emptyList();
-		boolean startAdded=false;
-		boolean endAdded=false;
-		if (startPoint.compareTo(links.firstKey())<0 || startPoint.compareTo(links.lastKey()) >0) {
-			links.put(startPoint, new Link<>(null));
-			startAdded = true;
-		}
-		if (endPoint.compareTo(links.firstKey())<0 || endPoint.compareTo(links.lastKey()) >0) {
-			links.put(endPoint, new Link<>(null));
-			endAdded = true;
-		}
-		Collection<Interval<T>> result = links.subMap(links.floorKey(startPoint), endPoint)
-				.values().stream().flatMap(l->l.getIntervals().stream()).collect(Collectors.toSet());
-		if(startAdded)
-			links.remove(startPoint);
-		if(endAdded)
-			links.remove(endPoint);
-		return result;
+		T firstKey = links.firstKey();
+		T lastKey = links.lastKey();
+		if (endPoint.compareTo(firstKey) < 0)
+			return Collections.emptyList();
+		if (startPoint.compareTo(lastKey) > 0)
+			return Collections.emptyList();
+		if (startPoint.compareTo(firstKey) < 0)
+			startPoint = firstKey;
+		if (endPoint.compareTo(lastKey) > 0)
+			endPoint = lastKey;
+		return links.subMap(links.floorKey(startPoint), endPoint).values().stream()
+				.flatMap(l -> l.getIntervals().stream()).collect(Collectors.toSet());
 	}
 
 	@Override
-	public int getMaxOverlapping(T startPoint, T endPoint) {
-		if(links.size()==0)
+	public int getMaxOverlaps(T startPoint, T endPoint) {
+		if (links.size() == 0)
 			return 0;
-		boolean startAdded=false;
-		boolean endAdded=false;
-		if (startPoint.compareTo(links.firstKey())<0 || startPoint.compareTo(links.lastKey()) >0) {
-			links.put(startPoint, new Link<>(null));
-			startAdded = true;
-		}
-		if (endPoint.compareTo(links.firstKey())<0 || endPoint.compareTo(links.lastKey()) >0) {
-			links.put(endPoint, new Link<>(null));
-			endAdded = true;
-		}
-		int result = links.subMap(links.floorKey(startPoint), endPoint)
-				.values().stream().map(l->l.getIntervals().size()).max(Integer::compareTo).orElse(0);
-		if(startAdded)
-			links.remove(startPoint);
-		if(endAdded)
-			links.remove(endPoint);
-		return result;
+		T firstKey = links.firstKey();
+		T lastKey = links.lastKey();
+		if (endPoint.compareTo(firstKey) < 0)
+			return 0;
+		if (startPoint.compareTo(lastKey) > 0)
+			return 0;
+		if (startPoint.compareTo(firstKey) < 0)
+			startPoint = firstKey;
+		if (endPoint.compareTo(lastKey) > 0)
+			endPoint = lastKey;
+		return links.subMap(links.floorKey(startPoint), endPoint)
+				.values().stream().map(l -> l.getIntervals().size()).max(Integer::compareTo).orElse(0);
 	}
 
 	@Override

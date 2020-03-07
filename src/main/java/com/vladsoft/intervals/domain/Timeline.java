@@ -10,7 +10,7 @@ public interface Timeline<T extends Comparable<T>> {
 
 	Collection<Interval<T>> getIntervals(T start, T end);
 
-	int getMaxOverlapping(T start, T end);
+	int getMaxOverlaps(T start, T end);
 
 	int getIntervalsNumber();
 

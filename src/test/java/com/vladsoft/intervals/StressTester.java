@@ -31,7 +31,7 @@ public class StressTester {
 			valid = true;
 			Interval<Integer> interval = generator.getIntervals().get(i);
 			if (limitOverlaps > 0 &&
-					timeline.getMaxOverlapping(interval.getStartPoint().getValue(),
+					timeline.getMaxOverlaps(interval.getStartPoint().getValue(),
 							interval.getEndPoint().getValue()) >= limitOverlaps)
 				valid = false;
 			if (valid) {
@@ -58,7 +58,7 @@ public class StressTester {
 
 	public void getMaxIntervals() {
 		time = System.currentTimeMillis();
-		int intervalsNumber = timeline.getMaxOverlapping(-1, valuesSpread + 1);
+		int intervalsNumber = timeline.getMaxOverlaps(-1, valuesSpread + 1);
 		System.out.println("Found " + intervalsNumber + " maximum overlapping intervals in " + (System.currentTimeMillis() - time) + "ms");
 	}
 

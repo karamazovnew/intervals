@@ -93,8 +93,8 @@ class TimelineImplTest {
 		assertThat(fixture.getIntervals(5,9), contains(intervalB));
 		assertThat(fixture.getIntervals(6,9), empty());
 
-		assertThat(fixture.getMaxOverlapping(1,7), is(2));
-		assertThat(fixture.getMaxOverlapping(5,6), is(1));
+		assertThat(fixture.getMaxOverlaps(1,7), is(2));
+		assertThat(fixture.getMaxOverlaps(5,6), is(1));
 
 		assertThat(fixture.getIntervalsNumber(), is(2));
 	}
@@ -106,7 +106,7 @@ class TimelineImplTest {
 
 	@Test
 	void getMaxIntervalsWhenTimelineEmpty(){
-		assertThat(fixture.getMaxOverlapping(1,7), is(0));
+		assertThat(fixture.getMaxOverlaps(1,7), is(0));
 	}
 
 }
