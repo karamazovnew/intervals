@@ -78,6 +78,9 @@ public class TimelineTest {
 
 		assertThat(timeline.getMaxOverlaps(-6, 16), is(3));
 		assertThat(timeline.getMaxOverlaps(0, 1), is(2));
+		assertThat(timeline.getMaxOverlaps(13, 15), is(1));
+		assertThat(timeline.getMaxOverlaps(14, 15), is(1));
+		assertThat(timeline.getMaxOverlaps(13, 16), is(1));
 
 		assertThat(timeline.getIntervalsNumber(), is(7));
 

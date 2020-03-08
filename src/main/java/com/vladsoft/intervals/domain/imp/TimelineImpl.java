@@ -9,8 +9,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.vladsoft.intervals.domain.PointType.START;
 
@@ -97,20 +99,21 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 
 	@Override
 	public int getMaxOverlaps(T startPoint, T endPoint) {
-		if (links.size() == 0)
+		if (links.size() == 0 || startPoint.compareTo(links.lastKey()) >= 0)
 			return 0;
-		T firstKey = links.firstKey();
-		T lastKey = links.lastKey();
-		if (endPoint.compareTo(firstKey) <= 0)
-			return 0;
-		if (startPoint.compareTo(lastKey) >= 0)
-			return 0;
-		if (startPoint.compareTo(firstKey) < 0)
-			startPoint = firstKey;
-		if (endPoint.compareTo(lastKey) > 0)
-			endPoint = lastKey;
-		return links.subMap(links.floorKey(startPoint), endPoint).values().stream()
-				.map(l -> l.getIntervals().size()).max(Integer::compareTo).orElse(0);
+		AtomicInteger max = new AtomicInteger(0);
+		Stream<Map.Entry<T, Link<T>>> stream = null;
+		if (startPoint.compareTo(links.firstKey()) < 0)
+			stream = links.entrySet().stream();
+		else
+			stream = links.tailMap(links.floorKey(startPoint)).entrySet().stream();
+		stream.anyMatch(entry -> {
+			if (endPoint.compareTo(entry.getKey()) <= 0)
+				return true;
+			max.set(Math.max(entry.getValue().getIntervals().size(), max.get()));
+			return false;
+		});
+		return max.get();
 	}
 
 	@Override
