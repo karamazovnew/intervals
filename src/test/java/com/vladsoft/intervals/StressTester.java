@@ -10,8 +10,8 @@ public class StressTester {
 
 	private static final int nrOfIntervals = 1000000;
 	private static final long seed = 4323;
-	private static final int valuesSpread = 80000;
-	private static final int maxLengthPercentage = 50;
+	private static final int valuesSpread = 87600;
+	private static final int maxLengthPercentage = 5;
 	private static final int logAtIntervals = 1000;
 	private static final int limitOverlaps = 500;
 
