@@ -26,7 +26,7 @@ class IntervalImplTest<T extends Comparable<T>> {
 	@BeforeEach
 	void setUp() {
 		when(startPoint.compareTo(endPoint)).thenReturn(-1);
-		fixture = new IntervalImpl<T>(startPoint, endPoint);
+		fixture = new IntervalImpl<>(startPoint, endPoint);
 	}
 
 	@Test

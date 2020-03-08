@@ -28,7 +28,7 @@ public class StressTester {
 		time = System.currentTimeMillis();
 		long t = time;
 		boolean valid;
-		int size = 0;
+		int size;
 		for (int i = 0; i < nrOfIntervals; i++) {
 			valid = true;
 			Interval<Integer> interval = generator.getIntervals().get(i);
@@ -49,7 +49,7 @@ public class StressTester {
 				}
 			}
 		}
-		System.out.println("\n======\nTotal Time: " + (double) (System.currentTimeMillis() - time) / 1000 + "sec");
+		System.out.println("======\nTotal Time: " + (double) (System.currentTimeMillis() - time) / 1000 + "sec\n");
 	}
 
 	public void getIntervals() {

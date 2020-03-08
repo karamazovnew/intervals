@@ -29,7 +29,7 @@ class PointImplTest<T extends Comparable<T>> {
 	@BeforeEach
 	void init() {
 		pointType = START;
-		fixture = new PointImpl<T>(value, pointType, parent);
+		fixture = new PointImpl<>(value, pointType, parent);
 	}
 
 	@Test

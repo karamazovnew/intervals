@@ -49,7 +49,6 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 
 	private T addEndPoint(Point<T> point) {
 		T key = point.getValue();
-		Link<T> found = links.get(key);
 		if (links.get(key) == null) {
 			links.put(key, makeLink(point, links.lowerEntry(key).getValue().getIntervals()));
 		}
@@ -57,9 +56,7 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 	}
 
 	private void traverseInheritances(ConcurrentNavigableMap<T, Link<T>> map, Interval<T> interval) {
-		map.forEach((key, link) -> {
-			link.addInterval(interval);
-		});
+		map.forEach((key, link) -> link.addInterval(interval));
 	}
 
 	@Override
@@ -100,7 +97,7 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 		if (links.size() == 0 || startPoint.compareTo(links.lastKey()) >= 0)
 			return 0;
 		AtomicInteger max = new AtomicInteger(0);
-		Stream<Map.Entry<T, Link<T>>> stream = null;
+		Stream<Map.Entry<T, Link<T>>> stream;
 		if (startPoint.compareTo(links.firstKey()) < 0)
 			stream = links.entrySet().stream();
 		else
@@ -130,8 +127,8 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 		if (endPoint.compareTo(lastKey) > 0)
 			endPoint = lastKey;
 		AtomicReference<T> prev = new AtomicReference<>();
-		ConcurrentNavigableMap<T, Link<T>> submap = links.subMap(links.floorKey(startPoint), true, endPoint, true);
-		Map.Entry<T, Link<T>> found = submap.entrySet().stream().filter((entry) -> {
+		ConcurrentNavigableMap<T, Link<T>> subMap = links.subMap(links.floorKey(startPoint), true, endPoint, true);
+		Map.Entry<T, Link<T>> found = subMap.entrySet().stream().filter((entry) -> {
 			if (entry.getValue().getIntervals().isEmpty()) {
 				prev.set(entry.getKey());
 				return false;
@@ -142,8 +139,8 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 				return ImplFactory.makeInterval(startPoint, found.getKey());
 			else
 				return ImplFactory.makeInterval(prev.get(), found.getKey());
-		else if (end.compareTo(submap.floorKey(endPoint)) > 0)
-			return ImplFactory.makeInterval(submap.floorKey(endPoint), end);
+		else if (end.compareTo(subMap.floorKey(endPoint)) > 0)
+			return ImplFactory.makeInterval(subMap.floorKey(endPoint), end);
 		return null;
 	}
 
