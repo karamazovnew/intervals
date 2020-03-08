@@ -4,9 +4,7 @@ import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Point;
 import com.vladsoft.intervals.domain.Timeline;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -147,6 +145,44 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 		else if (end.compareTo(submap.floorKey(endPoint)) > 0)
 			return ImplFactory.makeInterval(submap.floorKey(endPoint), end);
 		return null;
+	}
+
+	@Override
+	public List<Interval<T>> getGaps(T startPoint, T endPoint) {
+		if (links.size() == 0)
+			return Collections.singletonList(ImplFactory.makeInterval(startPoint, endPoint));
+		T firstKey = links.firstKey();
+		T lastKey = links.lastKey();
+		if (endPoint.compareTo(firstKey) <= 0)
+			return Collections.singletonList(ImplFactory.makeInterval(startPoint, endPoint));
+		if (startPoint.compareTo(lastKey) >= 0)
+			return Collections.singletonList(ImplFactory.makeInterval(startPoint, endPoint));
+		List<Interval<T>> result = new ArrayList<>();
+		ConcurrentNavigableMap<T, Link<T>> subMap;
+		if (startPoint.compareTo(firstKey) < 0) {
+			result.add(ImplFactory.makeInterval(startPoint, firstKey));
+			startPoint = links.firstKey();
+		}
+		if (endPoint.compareTo(lastKey) > 0)
+			subMap = links.tailMap(links.floorKey(startPoint));
+		else
+			subMap = links.subMap(links.floorKey(startPoint), true, endPoint, true);
+		AtomicReference<T> prev = new AtomicReference<>();
+		T finalStartPoint = startPoint;
+		subMap.forEach((key, value) -> {
+			if (value.getIntervals().isEmpty()) {
+				prev.set(key);
+			} else if (prev.get() != null)
+				if (finalStartPoint.compareTo(prev.get()) <= 0)
+					result.add(ImplFactory.makeInterval(prev.getAndSet(null), key));
+				else {
+					result.add(ImplFactory.makeInterval(finalStartPoint, key));
+					prev.set(null);
+				}
+		});
+		if (endPoint.compareTo(subMap.lastKey()) > 0)
+			result.add(ImplFactory.makeInterval(subMap.lastKey(), endPoint));
+		return result;
 	}
 
 	@Override

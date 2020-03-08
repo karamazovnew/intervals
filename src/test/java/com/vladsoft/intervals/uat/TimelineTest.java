@@ -7,6 +7,8 @@ import com.vladsoft.intervals.domain.imp.TimelineImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -18,12 +20,12 @@ public class TimelineTest {
 
 	@BeforeEach
 	public void init() {
-//		-5	-2	0	1	5	7	9	11	13	14	15
+//		-5	-2	0	1	5	7	9	11	14	15
 //					a-------]
 //				b-----------]
 //								c---]
 //						d-------]
-//											 e---]
+//										 e---]
 //		f---]
 		//		g-------]
 
@@ -75,15 +77,24 @@ public class TimelineTest {
 		assertThat(timeline.getIntervals(-6, 16), containsInAnyOrder(a, b, c, d, e, f, g));
 		assertThat(timeline.getIntervals(2, 8), containsInAnyOrder(a, b, d, g));
 		assertThat(timeline.getIntervals(11, 14), empty());
+	}
 
+	@Test
+	public void testGetMaxOverlaps() {
 		assertThat(timeline.getMaxOverlaps(-6, 16), is(3));
 		assertThat(timeline.getMaxOverlaps(0, 1), is(2));
 		assertThat(timeline.getMaxOverlaps(13, 15), is(1));
 		assertThat(timeline.getMaxOverlaps(14, 15), is(1));
 		assertThat(timeline.getMaxOverlaps(13, 16), is(1));
+	}
 
+	@Test
+	public void testGetIntervalsNumber() {
 		assertThat(timeline.getIntervalsNumber(), is(7));
+	}
 
+	@Test
+	public void testGetFirstGap() {
 		Interval<Integer> gap = timeline.getFirstGap(-10, 20);
 		assertThat(gap.getStartPoint().getValue(), is(-10));
 		assertThat(gap.getEndPoint().getValue(), is(-5));
@@ -99,6 +110,39 @@ public class TimelineTest {
 		gap = timeline.getFirstGap(14, 20);
 		assertThat(gap.getStartPoint().getValue(), is(15));
 		assertThat(gap.getEndPoint().getValue(), is(20));
+	}
+
+	@Test
+	public void testGetGaps() {
+		List<Interval<Integer>> gaps = timeline.getGaps(-10, 20);
+		assertThat(gaps.size(), is(4));
+		assertThat(gaps.get(0).getStartPoint().getValue(), is(-10));
+		assertThat(gaps.get(0).getEndPoint().getValue(), is(-5));
+		assertThat(gaps.get(1).getStartPoint().getValue(), is(-2));
+		assertThat(gaps.get(1).getEndPoint().getValue(), is(-0));
+		assertThat(gaps.get(2).getStartPoint().getValue(), is(11));
+		assertThat(gaps.get(2).getEndPoint().getValue(), is(14));
+		assertThat(gaps.get(3).getStartPoint().getValue(), is(15));
+		assertThat(gaps.get(3).getEndPoint().getValue(), is(20));
+
+		gaps = timeline.getGaps(-5, 1);
+		assertThat(gaps.size(), is(1));
+		assertThat(gaps.get(0).getStartPoint().getValue(), is(-2));
+		assertThat(gaps.get(0).getEndPoint().getValue(), is(0));
+
+		gaps = timeline.getGaps(-1, 14);
+		assertThat(gaps.size(), is(2));
+		assertThat(gaps.get(0).getStartPoint().getValue(), is(-1));
+		assertThat(gaps.get(0).getEndPoint().getValue(), is(-0));
+		assertThat(gaps.get(1).getStartPoint().getValue(), is(11));
+		assertThat(gaps.get(1).getEndPoint().getValue(), is(14));
+
+		gaps = timeline.getGaps(10, 16);
+		assertThat(gaps.size(), is(2));
+		assertThat(gaps.get(0).getStartPoint().getValue(), is(11));
+		assertThat(gaps.get(0).getEndPoint().getValue(), is(14));
+		assertThat(gaps.get(1).getStartPoint().getValue(), is(15));
+		assertThat(gaps.get(1).getEndPoint().getValue(), is(16));
 	}
 
 }

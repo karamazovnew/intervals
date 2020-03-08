@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static com.vladsoft.intervals.domain.PointType.END;
 import static com.vladsoft.intervals.domain.PointType.START;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -147,6 +149,15 @@ class TimelineImplTest {
 		gap = fixture.getFirstGap(4, 9);
 		assertThat(gap.getStartPoint().getValue(), is(4));
 		assertThat(gap.getEndPoint().getValue(), is(6));
+
+		List<Interval<Integer>> gaps = fixture.getGaps(0, 10);
+		assertThat(gaps.size(), is(4));
+		assertThat(gaps.get(0).getStartPoint().getValue(), is(0));
+		assertThat(gaps.get(0).getEndPoint().getValue(), is(1));
+		assertThat(gaps.get(1).getStartPoint().getValue(), is(3));
+		assertThat(gaps.get(1).getEndPoint().getValue(), is(6));
+		assertThat(gaps.get(2).getStartPoint().getValue(), is(9));
+		assertThat(gaps.get(2).getEndPoint().getValue(), is(10));
 	}
 
 	@Test
@@ -164,6 +175,11 @@ class TimelineImplTest {
 		Interval<Integer> gap = fixture.getFirstGap(0, 1);
 		assertThat(gap.getStartPoint().getValue(), is(0));
 		assertThat(gap.getEndPoint().getValue(), is(1));
+
+		List<Interval<Integer>> gaps = fixture.getGaps(0, 1);
+		assertThat(gaps.size(), is(1));
+		assertThat(gaps.get(0).getStartPoint().getValue(), is(0));
+		assertThat(gaps.get(0).getEndPoint().getValue(), is(1));
 	}
 
 }

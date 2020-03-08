@@ -4,6 +4,8 @@ import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Timeline;
 import com.vladsoft.intervals.domain.imp.TimelineImpl;
 
+import java.util.Collection;
+
 public class StressTester {
 
 	private static final int nrOfIntervals = 1000000;
@@ -68,4 +70,10 @@ public class StressTester {
 		System.out.println("Found first gap " + gap + " in " + (System.currentTimeMillis() - time) + "ms");
 	}
 
+	public void getAllGaps(){
+		time = System.currentTimeMillis();
+		Collection<Interval<Integer>> gaps = timeline.getGaps(-10, valuesSpread +10);
+		System.out.format("Found %d gaps in %dms%n", gaps.size(), (System.currentTimeMillis() - time));
+		System.out.println("Gaps: " + gaps);
+	}
 }
