@@ -32,5 +32,8 @@ On my system this is a result
 #### Run com.vladsoft.intervals.uat.TimelineTest:
 - A unit test using a simple timeline example.
 - A visual "map" of the timeline is shown as comment.
- 
 
+### **Planned:**
+- PointType is useless and will be removed.
+- Deletion of intervals from the timeline: will require a counter of how many intervals end in a link. When removing an interval, the counter will decrement. When it reaches zero, if there are no intervals left, the link will be deleted.
+- Improve cosmetics of algorithms in the TimelineImpl class. 
