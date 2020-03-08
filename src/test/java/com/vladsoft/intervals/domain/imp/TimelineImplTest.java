@@ -151,7 +151,7 @@ class TimelineImplTest {
 		assertThat(gap.getEndPoint().getValue(), is(6));
 
 		List<Interval<Integer>> gaps = fixture.getGaps(0, 10);
-		assertThat(gaps.size(), is(4));
+		assertThat(gaps.size(), is(3));
 		assertThat(gaps.get(0).getStartPoint().getValue(), is(0));
 		assertThat(gaps.get(0).getEndPoint().getValue(), is(1));
 		assertThat(gaps.get(1).getStartPoint().getValue(), is(3));

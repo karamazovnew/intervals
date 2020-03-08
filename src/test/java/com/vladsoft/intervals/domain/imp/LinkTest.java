@@ -26,7 +26,7 @@ class LinkTest<T extends Comparable<T>> {
 	void newEnd() {
 		fixture = new Link<>( null);
 
-		assertThat(fixture.getIntervals(), is(nullValue()));
+		assertThat(fixture.getIntervals(), is(empty()));
 	}
 
 	@Test
