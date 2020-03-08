@@ -2,7 +2,7 @@ package com.vladsoft.intervals;
 
 import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Timeline;
-import com.vladsoft.intervals.domain.timeline.TimelineImpl;
+import com.vladsoft.intervals.domain.imp.TimelineImpl;
 
 public class StressTester {
 
@@ -60,6 +60,12 @@ public class StressTester {
 		time = System.currentTimeMillis();
 		int intervalsNumber = timeline.getMaxOverlaps(-1, valuesSpread + 1);
 		System.out.println("Found " + intervalsNumber + " maximum overlapping intervals in " + (System.currentTimeMillis() - time) + "ms");
+	}
+
+	public void getFirstGap() {
+		time = System.currentTimeMillis();
+		Interval<Integer> gap = timeline.getFirstGap(10, valuesSpread + 10);
+		System.out.println("Found first gap " + gap + " in " + (System.currentTimeMillis() - time) + "ms");
 	}
 
 }

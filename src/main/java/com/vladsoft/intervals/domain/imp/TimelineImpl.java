@@ -1,4 +1,4 @@
-package com.vladsoft.intervals.domain.timeline;
+package com.vladsoft.intervals.domain.imp;
 
 import com.vladsoft.intervals.domain.Interval;
 import com.vladsoft.intervals.domain.Point;
@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.vladsoft.intervals.domain.PointType.START;
@@ -82,9 +83,9 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 			return Collections.emptyList();
 		T firstKey = links.firstKey();
 		T lastKey = links.lastKey();
-		if (endPoint.compareTo(firstKey) < 0)
+		if (endPoint.compareTo(firstKey) <= 0)
 			return Collections.emptyList();
-		if (startPoint.compareTo(lastKey) > 0)
+		if (startPoint.compareTo(lastKey) >= 0)
 			return Collections.emptyList();
 		if (startPoint.compareTo(firstKey) < 0)
 			startPoint = firstKey;
@@ -100,16 +101,49 @@ public class TimelineImpl<T extends Comparable<T>> implements Timeline<T> {
 			return 0;
 		T firstKey = links.firstKey();
 		T lastKey = links.lastKey();
-		if (endPoint.compareTo(firstKey) < 0)
+		if (endPoint.compareTo(firstKey) <= 0)
 			return 0;
-		if (startPoint.compareTo(lastKey) > 0)
+		if (startPoint.compareTo(lastKey) >= 0)
 			return 0;
 		if (startPoint.compareTo(firstKey) < 0)
 			startPoint = firstKey;
 		if (endPoint.compareTo(lastKey) > 0)
 			endPoint = lastKey;
-		return links.subMap(links.floorKey(startPoint), endPoint)
-				.values().stream().map(l -> l.getIntervals().size()).max(Integer::compareTo).orElse(0);
+		return links.subMap(links.floorKey(startPoint), endPoint).values().stream()
+				.map(l -> l.getIntervals().size()).max(Integer::compareTo).orElse(0);
+	}
+
+	@Override
+	public Interval<T> getFirstGap(T startPoint, T endPoint) {
+		if (links.size() == 0)
+			return ImplFactory.makeInterval(startPoint, endPoint);
+		T firstKey = links.firstKey();
+		T lastKey = links.lastKey();
+		T end = endPoint;
+		if (endPoint.compareTo(firstKey) <= 0)
+			return ImplFactory.makeInterval(startPoint, endPoint);
+		if (startPoint.compareTo(lastKey) >= 0)
+			return ImplFactory.makeInterval(startPoint, endPoint);
+		if (startPoint.compareTo(firstKey) < 0)
+			return ImplFactory.makeInterval(startPoint, firstKey);
+		if (endPoint.compareTo(lastKey) > 0)
+			endPoint = lastKey;
+		AtomicReference<T> prev = new AtomicReference<>();
+		ConcurrentNavigableMap<T, Link<T>> submap = links.subMap(links.floorKey(startPoint), true, endPoint, true);
+		Map.Entry<T, Link<T>> found = submap.entrySet().stream().filter((entry) -> {
+			if (entry.getValue().getIntervals().isEmpty()) {
+				prev.set(entry.getKey());
+				return false;
+			} else return prev.get() != null;
+		}).findFirst().orElse(null);
+		if (found != null)
+			if (startPoint.compareTo(prev.get()) >= 0)
+				return ImplFactory.makeInterval(startPoint, found.getKey());
+			else
+				return ImplFactory.makeInterval(prev.get(), found.getKey());
+		else if (end.compareTo(submap.floorKey(endPoint)) > 0)
+			return ImplFactory.makeInterval(submap.floorKey(endPoint), end);
+		return null;
 	}
 
 	@Override

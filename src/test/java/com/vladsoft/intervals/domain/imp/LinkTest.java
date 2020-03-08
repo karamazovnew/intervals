@@ -1,4 +1,4 @@
-package com.vladsoft.intervals.domain.timeline;
+package com.vladsoft.intervals.domain.imp;
 
 import com.vladsoft.intervals.domain.Interval;
 import org.junit.jupiter.api.Test;

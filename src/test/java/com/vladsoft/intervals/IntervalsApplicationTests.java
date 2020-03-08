@@ -16,6 +16,7 @@ class IntervalsApplicationTests {
 		test.insertIntervals();
 		test.getIntervals();
 		test.getMaxIntervals();
+		test.getFirstGap();
 	}
 
 }

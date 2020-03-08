@@ -6,11 +6,13 @@ public interface Timeline<T extends Comparable<T>> {
 
 	void addInterval(Interval<T> interval);
 
-	Collection<Interval<T>> getIntervals(T value);
+	Collection<Interval<T>> getIntervals(T point);
 
-	Collection<Interval<T>> getIntervals(T start, T end);
+	Collection<Interval<T>> getIntervals(T startPoint, T endPoint);
 
-	int getMaxOverlaps(T start, T end);
+	Interval<T> getFirstGap(T startPoint, T endPoint);
+
+	int getMaxOverlaps(T startPoint, T endPoint);
 
 	int getIntervalsNumber();
 

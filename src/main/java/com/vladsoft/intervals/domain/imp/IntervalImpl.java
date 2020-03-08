@@ -13,8 +13,8 @@ public class IntervalImpl<T extends Comparable<T>> implements Interval<T> {
 		if (startPoint.compareTo(endPoint) >= 0)
 			throw new IllegalArgumentException("EndPoint must be after StartPoint");
 		else {
-			this.startPoint = new PointImpl<>(startPoint, PointType.START, this);
-			this.endPoint = new PointImpl<>(endPoint, PointType.END, this);
+			this.startPoint = ImplFactory.makePoint(startPoint, PointType.START, this);
+			this.endPoint = ImplFactory.makePoint(endPoint, PointType.END, this);
 		}
 	}
 
